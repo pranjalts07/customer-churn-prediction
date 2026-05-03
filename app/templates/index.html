@@ -1,674 +1,1826 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ChurnSense</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChurnSense - Customer Churn Prediction</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
   <style>
     :root {
-      --bg:      #fafbfc;
-      --card:    #ffffff;
-      --border:  #e2e8f0;
-      --text:    #0f172a;
-      --text-2:  #64748b;
-      --text-3:  #94a3b8;
-      --blue:    #0ea5e9;
-      --red:     #ef4444;
-      --amber:   #eab308;
-      --green:   #22c55e;
-      --violet:  #a78bfa;
-      --sidebar: #ffffff;
+      /* backgrounds */
+      --bg-page:    #f8f8f8;
+      --bg-card:    #ffffff;
+      --bg-hover:   #fafafa;
+
+      /* text */
+      --text-900:   #0a0a0a;
+      --text-600:   #374151;
+      --text-400:   #9ca3af;
+      --text-300:   #d1d5db;
+
+      /* borders */
+      --border:     #e5e7eb;
+      --border-dark: #0a0a0a;
+
+      /* semantic.NO green for UI chrome */
+      --red-600:    #ef4444;
+      --red-100:    #fee2e2;
+      --amber-600:  #f59e0b;
+      --amber-100:  #fef3c7;
+      --blue-600:   #3b82f6;
+      --blue-100:   #dbeafe;
+      --purple-600: #8b5cf6;
+      --purple-100: #f3e8ff;
+      --green:      #22c55e;
+      --green-100:  #dcfce7;
+
+      /* legacy for data tiers */
+      --gray-900: #111827;
+      --gray-700: #374151;
+      --gray-600: #4b5563;
+      --gray-500: #6b7280;
+      --gray-400: #9ca3af;
+      --gray-200: #e5e7eb;
+      --gray-100: #f3f4f6;
+      --gray-50:  #f9fafb;
+
+      --sidebar-w: 240px;
+      --radius:    10px;
+      --shadow:    0 1px 3px rgba(0,0,0,0.06);
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html, body { width: 100%; height: 100%; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
-      font-size: 14px;
-      line-height: 1.6;
-      display: flex;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* Alert */
-    #alert {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      background: var(--red);
-      color: white;
-      padding: 16px 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 1000;
-      display: none;
-      max-width: 360px;
-      font-size: 13px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      color: var(--gray-900);
       line-height: 1.5;
     }
 
-    #alert.show { display: block; }
-    #alert.error { background: var(--red); }
-    #alert.warning { background: var(--amber); color: #92400e; }
-    #alert.success { background: var(--green); color: white; }
+    #dashboard-screen {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+      background: var(--bg-page);
+    }
 
-    /* Sidebar */
-    #sidebar {
-      width: 200px;
-      background: var(--sidebar);
-      border-right: 1px solid var(--border);
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: var(--sidebar-w);
+      background: white;
+      border-right: 1px solid var(--gray-200);
       display: flex;
       flex-direction: column;
-      position: fixed;
-      top: 0; left: 0; bottom: 0;
-      padding: 24px 0;
-      z-index: 200;
+      padding: 0;
+      z-index: 100;
     }
 
-    .logo { padding: 0 16px 16px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
-    .logo-text { font-size: 16px; font-weight: 800; letter-spacing: -0.5px; }
-    .logo-sub { font-size: 10px; color: var(--text-3); margin-top: 2px; }
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--gray-200);
+    }
 
-    nav { flex: 1; padding: 0 8px; }
-    .nav-label { font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 1px; padding: 0 8px; margin: 12px 0 4px; }
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .sidebar-logo-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--text-900);
+      border-radius: 50%;
+    }
+
+    .sidebar-logo-text {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-900);
+    }
+
+    .sidebar-subtitle {
+      font-size: 11px;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .sidebar-back {
+      margin: 12px 12px 0;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--gray-600);
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .sidebar-back:hover {
+      background: var(--bg-hover);
+      border-color: var(--text-900);
+      color: var(--text-900);
+    }
+
+    .sidebar-nav-label {
+      padding: 16px 20px 6px;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .sidebar-nav-item {
+      padding: 9px 12px;
+      margin: 2px 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--gray-600);
+      background: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: left;
+    }
+
+    .sidebar-nav-item:hover {
+      background: var(--bg-hover);
+      color: var(--text-900);
+    }
+
+    .sidebar-nav-item.active {
+      background: #f4f4f4;
+      color: var(--text-900);
+      font-weight: 600;
+    }
 
     .nav-item {
-      display: block; padding: 10px 12px; margin-bottom: 2px;
-      border-radius: 6px; cursor: pointer; color: var(--text-2);
-      font-size: 13px; font-weight: 500; text-decoration: none;
-      transition: all 0.2s;
+      display: block;
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #6b7280;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: none;
+      background: none;
+      font-family: inherit;
+      text-align: left;
     }
-    .nav-item:hover { background: var(--bg); color: var(--text); }
-    .nav-item.active { background: #eff6ff; color: #0ea5e9; font-weight: 600; border-left: 3px solid #0ea5e9; padding-left: 9px; }
+    .nav-item:hover { background: #f9f9f9; color: #0a0a0a; }
+    .nav-item.active { background: #f4f4f4; color: #0a0a0a; font-weight: 600; }
 
-    /* Main */
-    #main { margin-left: 200px; flex: 1; padding: 32px 40px; max-width: 1400px; margin-right: auto; }
-    .view { display: none; }
-    .view.active { display: block; }
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 16px 20px;
+      border-top: 1px solid var(--gray-200);
+      font-size: 11px;
+      color: var(--gray-500);
+      line-height: 1.6;
+    }
 
-    /* Loading state */
-    .loading { opacity: 0.6; pointer-events: none; }
-    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #e2e8f0; border-top-color: var(--blue); border-radius: 50%; animation: spin 0.6s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .dashboard-main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      overflow-y: auto;
+    }
 
-    /* Page */
-    .page-title { font-size: 32px; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
-    .page-sub { font-size: 14px; color: var(--text-2); margin-bottom: 28px; }
+    .page-header {
+      padding: 28px 32px 0;
+      margin-bottom: 24px;
+    }
 
-    /* KPI Grid */
-    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
-    .kpi {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
+    .page-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--gray-900);
+    }
+
+    .page-subtitle {
+      font-size: 14px;
+      color: var(--gray-600);
+      margin-top: 4px;
+    }
+
+    .page-content {
+      padding: 0 32px 32px;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
       padding: 20px;
-      transition: all 0.2s;
-      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
     }
-    .kpi:hover { border-color: var(--blue); box-shadow: 0 4px 12px rgba(14,165,233,0.1); }
-    .kpi-label { font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; font-weight: 600; }
-    .kpi-value { font-size: 32px; font-weight: 800; line-height: 1.1; letter-spacing: -1px; min-height: 40px; }
-    .kpi-foot { font-size: 11px; color: var(--text-3); margin-top: 8px; }
 
-    /* Card */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+
+    .kpi-card.blue::before  { background: var(--blue-600); }
+    .kpi-card.red::before   { background: var(--red-600); }
+    .kpi-card.amber::before { background: var(--amber-600); }
+    .kpi-card.green::before { background: var(--green); }
+
+    .kpi-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .kpi-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--gray-900);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .kpi-card.blue .kpi-value  { color: #0a0a0a !important; }
+    .kpi-card.red .kpi-value   { color: #0a0a0a !important; }
+    .kpi-card.amber .kpi-value { color: #0a0a0a !important; }
+    .kpi-card.green .kpi-value { color: #0a0a0a !important; }
+
+    .kpi-sub {
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .chart-card {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .chart-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 16px;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 240px;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .data-table thead {
+      background: var(--gray-50);
+    }
+
+    .data-table thead th {
+      padding: 10px 12px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      border-bottom: 2px solid var(--gray-200);
+    }
+
+    .data-table tbody td {
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--gray-100);
+      color: var(--gray-700);
+    }
+
+    .data-table tbody tr:hover {
+      background: var(--bg-hover);
+    }
+
+    .table-container {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+
+    .table-header {
+      margin-bottom: 16px;
+    }
+
+    .table-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 4px;
+    }
+
+    .table-subtitle {
+      font-size: 12px;
+      color: var(--gray-500);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 16px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-critical {
+      background: var(--red-100);
+      color: var(--red-600);
+    }
+
+    .badge-at-risk {
+      background: var(--amber-100);
+      color: var(--amber-600);
+    }
+
+    .badge-watch {
+      background: var(--purple-100);
+      color: var(--purple-600);
+    }
+
+    .badge-safe {
+      background: var(--green-100);
+      color: var(--green);
+    }
+
+    .risk-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
       margin-bottom: 20px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .risk-stat {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .risk-stat-tier {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .risk-stat-count {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .risk-stat-revenue {
+      font-size: 12px;
+      color: #374151;
+    }
+
+    .risk-stat.critical .risk-stat-tier,
+    .risk-stat.critical .risk-stat-count { color: var(--red-600); }
+    .risk-stat.at-risk .risk-stat-tier,
+    .risk-stat.at-risk .risk-stat-count { color: var(--amber-600); }
+    .risk-stat.watch .risk-stat-tier,
+    .risk-stat.watch .risk-stat-count { color: var(--purple-600); }
+    .risk-stat.safe .risk-stat-tier,
+    .risk-stat.safe .risk-stat-count { color: var(--green); }
+
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 7px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 20px;
+      border: 1px solid var(--gray-200);
+      background: white;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--text-900);
+      color: var(--text-900);
+    }
+
+    .filter-btn.active {
+      background: var(--text-900);
+      border-color: var(--text-900);
+      color: white;
+      font-weight: 600;
+    }
+
+    .info-box {
+      background: #f0fdf4;
+      border: 1px solid #dcfce7;
+      border-left: 3px solid var(--green);
+      border-radius: 6px;
+      padding: 16px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--gray-700);
+    }
+
+    .context-card {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--gray-700);
+    }
+
+    .roi-calc {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .roi-inputs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      font-size: 14px;
+      color: var(--gray-900);
+      background: white;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--text-900);
+      box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.08);
+    }
+
+    .calc-btn {
+      background: var(--text-900);
+      color: white;
+      border: none;
+      padding: 11px 28px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .calc-btn:hover {
+      background: #333333;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .roi-results {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .roi-card {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      padding: 16px;
+    }
+
+    .roi-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gray-400);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .roi-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--gray-900);
+    }
+
+    .lookup-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .form-card {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .form-field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 5px;
+    }
+
+    .form-field input,
+    .form-field select {
+      width: 100%;
+      padding: 9px 11px;
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      font-size: 13px;
+      color: var(--gray-900);
+      background: white;
+    }
+
+    .form-field input:focus,
+    .form-field select:focus {
+      outline: none;
+      border-color: var(--text-900);
+      box-shadow: 0 0 0 3px rgba(10, 10, 10, 0.08);
+    }
+
+    .analyze-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--text-900);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
       transition: all 0.2s;
     }
-    .card:hover { border-color: #cbd5e1; }
-    .card-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; letter-spacing: -0.3px; }
 
-    /* Grid */
-    .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-    canvas { max-height: 280px; }
-
-    /* Table */
-    table { width: 100%; border-collapse: collapse; }
-    thead tr { border-bottom: 2px solid var(--border); }
-    th {
-      text-align: left; padding: 12px;
-      font-size: 11px; font-weight: 700; color: var(--text-3);
-      text-transform: uppercase; letter-spacing: 0.5px;
+    .analyze-btn:hover {
+      background: #333333;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
-    td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 13px; word-wrap: break-word; overflow-wrap: break-word; }
-    tbody tr:hover { background: var(--bg); }
 
-    /* Badge */
-    .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-    .b-critical { background: #fee2e2; color: #991b1b; }
-    .b-at-risk { background: #fef3c7; color: #92400e; }
-    .b-watch { background: #f3e8ff; color: #6b21a8; }
-    .b-safe { background: #dcfce7; color: #166534; }
-
-    /* Form */
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-    .fg label { display: block; font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-    input, select {
-      width: 100%; padding: 10px 12px; border: 1px solid var(--border);
-      border-radius: 8px; font-size: 13px; font-family: inherit;
-      background: var(--card); color: var(--text);
-      transition: all 0.2s;
+    .result-card {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      box-shadow: var(--shadow);
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    input:focus, select:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(14,165,233,0.1); }
 
-    button {
-      padding: 10px 24px; background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
-      color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s; font-family: inherit;
+    .result-empty {
+      text-align: center;
+      color: var(--gray-500);
+      font-size: 14px;
     }
-    button:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(14,165,233,0.3); }
-    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-    /* Empty state */
-    .empty { text-align: center; padding: 40px 20px; color: var(--text-3); }
+    .result-prob {
+      font-size: 72px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 12px;
+      text-align: center;
+    }
 
-    /* Responsive */
-    @media (max-width: 1200px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 1000px) { .g2 { grid-template-columns: 1fr; } }
-    @media (max-width: 900px) { #sidebar { display: none; } #main { margin-left: 0; padding: 20px; } }
+    .result-prob.high   { color: var(--red-600); }
+    .result-prob.medium { color: var(--amber-600); }
+    .result-prob.low    { color: var(--green); }
+
+    .result-offer {
+      background: #f0fdf4;
+      border: 1px solid #dcfce7;
+      border-left: 3px solid var(--green);
+      border-radius: 6px;
+      padding: 14px;
+      margin-top: 20px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--gray-700);
+    }
+
+    .business-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .stat-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text-900);
+      margin-bottom: 6px;
+    }
+
+    .stat-text {
+      font-size: 12px;
+      color: var(--gray-700);
+      line-height: 1.6;
+    }
+
+    .decision-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 16px;
+    }
+
+    .decision-row {
+      padding: 8px 0;
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--gray-700);
+    }
+
+    .decision-row strong {
+      color: var(--text-900);
+      font-weight: 700;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 32px;
+      color: var(--gray-500);
+      font-size: 14px;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--gray-200);
+      border-top: 3px solid var(--text-900);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 1200px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .lookup-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .problem-solution {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .how-steps {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .business-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .dashboard-main {
+        margin-left: 0;
+      }
+
+      .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        border-right: none;
+        border-bottom: 1px solid var(--gray-200);
+      }
+    }
   </style>
 </head>
 <body>
 
-<div id="alert"></div>
+<div id="landing-screen" style="
+  position: fixed;
+  inset: 0;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont,
+               'Inter', 'Segoe UI', sans-serif;
+  z-index: 1000;
+  overflow: hidden;
+">
 
-<aside id="sidebar">
-  <div class="logo">
-    <div class="logo-text">ChurnSense</div>
-    <div class="logo-sub">Revenue Intelligence</div>
-  </div>
-  <nav>
-    <div class="nav-label">Main</div>
-    <div class="nav-item active" onclick="showView('overview')" data-view="overview">Overview</div>
-    <div class="nav-item" onclick="showView('risk')" data-view="risk">Risk Analysis</div>
-    <div class="nav-item" onclick="showView('revenue')" data-view="revenue">ROI Calculator</div>
-    <div class="nav-item" onclick="showView('lookup')" data-view="lookup">Customer Lookup</div>
-  </nav>
-</aside>
-
-<main id="main">
-
-  <!-- Overview -->
-  <div class="view active" id="view-overview">
-    <div class="page-title">Overview</div>
-    <div class="page-sub">Customer churn risk snapshot</div>
-
-    <div class="kpi-grid">
-      <div class="kpi">
-        <div class="kpi-label">Total Customers</div>
-        <div class="kpi-value" id="kpi-total"><span class="spinner"></span></div>
-        <div class="kpi-foot">in analysis</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Customers at Risk</div>
-        <div class="kpi-value" style="color:var(--amber);" id="kpi-action-count"><span class="spinner"></span></div>
-        <div class="kpi-foot">CRITICAL or AT-RISK</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Revenue Exposure</div>
-        <div class="kpi-value" style="color:var(--red);" id="kpi-revenue-risk"><span class="spinner"></span></div>
-        <div class="kpi-foot">total at risk</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Potential Saves</div>
-        <div class="kpi-value" style="color:var(--green);" id="kpi-potential-saves"><span class="spinner"></span></div>
-        <div class="kpi-foot">at 30% retention</div>
-      </div>
+  <!-- TOP NAV: creative two-line title with green dot -->
+  <div style="
+    padding: 18px 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  ">
+    <div style="display:flex; flex-direction:column; gap:2px;">
+      <span style="
+        font-size: 22px;
+        font-weight: 900;
+        color: #0a0a0a;
+        letter-spacing: -0.04em;
+        line-height: 1;
+      ">Customer Churn</span>
+      <span style="
+        font-size: 22px;
+        font-weight: 900;
+        color: #0a0a0a;
+        letter-spacing: -0.04em;
+        line-height: 1;
+      ">Prediction<span style="
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: #22c55e;
+        border-radius: 50%;
+        margin-left: 6px;
+        margin-bottom: 3px;
+        vertical-align: middle;
+      "></span></span>
     </div>
-
-    <div class="g2">
-      <div class="card">
-        <div class="card-title">Risk Distribution</div>
-        <div style="position: relative; height: 280px;">
-          <canvas id="chart-donut"></canvas>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">Top Churn Factors</div>
-        <div style="position: relative; height: 280px;">
-          <canvas id="chart-importance"></canvas>
-        </div>
-      </div>
-    </div>
+    <button onclick="showDashboard()" style="
+      background: #0a0a0a;
+      color: #fff;
+      border: none;
+      padding: 10px 26px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 100px;
+      font-family: inherit;
+      letter-spacing: 0.02em;
+    ">Open Dashboard &rarr;</button>
   </div>
 
-  <!-- Risk Analysis -->
-  <div class="view" id="view-risk">
-    <div class="page-title">Risk Analysis</div>
-    <div class="page-sub">All customers ranked by risk</div>
+  <!-- MAIN BODY -->
+  <div style="
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 52px;
+    gap: 64px;
+    align-items: center;
+    overflow: hidden;
+  ">
 
-    <div style="margin-bottom:24px; display:flex; gap:12px; align-items:center;">
-      <label style="font-weight:600; font-size:13px;">Filter by risk:</label>
-      <select id="tier-filter" onchange="filterRiskTable()" style="width:160px; padding:8px 12px;">
-        <option value="">All tiers</option>
-        <option value="CRITICAL">[CRIT] Immediate call</option>
-        <option value="AT-RISK">[HIGH] Email this week</option>
-        <option value="WATCH">[MED] Monitor</option>
-        <option value="SAFE">[LOW] No action</option>
-      </select>
-    </div>
+    <!-- LEFT -->
+    <div style="display:flex; flex-direction:column; gap:24px;">
 
-    <div class="card">
-      <div class="card-title">Customer List</div>
-      <div style="overflow-x:auto;">
-        <table>
-          <thead><tr><th>Customer</th><th>Churn Risk</th><th>Revenue</th><th>Exposure</th><th>Tier</th></tr></thead>
-          <tbody id="risk-tbody"><tr><td colspan="5" class="empty"><span class="spinner"></span> Loading...</td></tr></tbody>
-        </table>
+      <div style="
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        width: fit-content;
+        background: #f4f4f4;
+        padding: 6px 14px;
+        border-radius: 100px;
+      ">
+        <div style="width:7px;height:7px;background:#0a0a0a;border-radius:50%;"></div>
+        <span style="font-size:12px;font-weight:600;color:#6b7280;letter-spacing:0.06em;">
+          IBM Telco Churn Dataset
+        </span>
       </div>
+
+      <h1 style="
+        font-size: clamp(40px, 4.2vw, 66px);
+        font-weight: 800;
+        color: #0a0a0a;
+        line-height: 1.07;
+        letter-spacing: -0.03em;
+        margin: 0;
+      ">Which telecom<br>customers are<br>about to leave?</h1>
+
+      <p style="
+        font-size: 15px;
+        color: #6b7280;
+        line-height: 1.8;
+        margin: 0;
+        max-width: 480px;
+      ">I worked with machine learning models to predict which
+      telecom customers were most likely to leave. Random Forest
+      became the final model because it showed better-calibrated
+      probabilities than Logistic Regression, which matters more
+      than raw ranking accuracy when using a cost-weighted
+      threshold to maximize retention ROI.
+      I built a dashboard that turns churn scores into a
+      prioritized retention list showing who is most at risk,
+      how much revenue is exposed, which customers should be
+      contacted first, and includes an ROI calculator to
+      estimate campaign value before committing budget.</p>
+
+      <div style="
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 4px;
+      ">
+        <span style="
+          background: #0a0a0a;
+          color: #fff;
+          font-size: 11px;
+          font-weight: 600;
+          padding: 5px 12px;
+          border-radius: 100px;
+          letter-spacing: 0.04em;
+        ">ROI Calculator</span>
+        <span style="
+          background: #0a0a0a;
+          color: #fff;
+          font-size: 11px;
+          font-weight: 600;
+          padding: 5px 12px;
+          border-radius: 100px;
+          letter-spacing: 0.04em;
+        ">Risk Tiers</span>
+        <span style="
+          background: #0a0a0a;
+          color: #fff;
+          font-size: 11px;
+          font-weight: 600;
+          padding: 5px 12px;
+          border-radius: 100px;
+          letter-spacing: 0.04em;
+        ">Revenue at Risk</span>
+        <span style="
+          background: #0a0a0a;
+          color: #fff;
+          font-size: 11px;
+          font-weight: 600;
+          padding: 5px 12px;
+          border-radius: 100px;
+          letter-spacing: 0.04em;
+        ">Customer Lookup</span>
+        <span style="
+          background: #0a0a0a;
+          color: #fff;
+          font-size: 11px;
+          font-weight: 600;
+          padding: 5px 12px;
+          border-radius: 100px;
+          letter-spacing: 0.04em;
+        ">Retention Playbook</span>
+      </div>
+
+      <!-- Author: black, no icon, bottom -->
+      <div style="margin-top: 8px;">
+        <span style="
+          font-size: 13px;
+          font-weight: 600;
+          color: #0a0a0a;
+        ">Built by Pranjal Tariga Suresh</span>
+      </div>
+
     </div>
-  </div>
 
-  <!-- ROI Calculator -->
-  <div class="view" id="view-revenue">
-    <div class="page-title">ROI Calculator</div>
-    <div class="page-sub">Estimate retention campaign returns</div>
+    <!-- RIGHT: graphic stat cards -->
+    <div style="display:flex; flex-direction:column; gap:14px; height: min(460px, 68vh);">
 
-    <div class="card">
-      <div class="card-title">Campaign Simulation</div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
-        <div>
-          <div style="margin-bottom: 20px;">
-            <label style="display: block; font-weight: 600; margin-bottom: 8px;">Customers to contact</label>
-            <input type="number" id="roi-slider" value="54" min="1" max="500" oninput="updateROI()" />
+      <!-- Top row: two oval cards -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; flex:1;">
+
+        <!-- Card 1: white with border -->
+        <div style="
+          background: #ffffff;
+          border: 2px solid #0a0a0a;
+          border-radius: 20px;
+          padding: 28px 24px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        ">
+          <span style="font-size:10px;font-weight:700;color:#9ca3af;
+                       letter-spacing:0.12em;text-transform:uppercase;">
+            Customers Analyzed
+          </span>
+          <div>
+            <div style="font-size:50px;font-weight:800;color:#0a0a0a;
+                        line-height:1;letter-spacing:-0.03em;">7K+</div>
+            <div style="font-size:11px;color:#6b7280;margin-top:5px;">
+              real IBM Telco records
+            </div>
           </div>
-          <div style="margin-bottom: 20px;">
-            <label style="display: block; font-weight: 600; margin-bottom: 8px;">Cost per contact ($)</label>
-            <input type="number" id="roi-cost" value="25" min="0" oninput="updateROI()" />
+        </div>
+
+        <!-- Card 2: white with border -->
+        <div style="
+          background: #ffffff;
+          border: 2px solid #0a0a0a;
+          border-radius: 20px;
+          padding: 28px 24px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+        ">
+          <span style="font-size:10px;font-weight:700;color:#9ca3af;
+                       letter-spacing:0.12em;text-transform:uppercase;">
+            Model Features
+          </span>
+          <div>
+            <div style="font-size:50px;font-weight:800;color:#0a0a0a;
+                        line-height:1;letter-spacing:-0.03em;">33</div>
+            <div style="font-size:11px;color:#9ca3af;margin-top:5px;">
+              engineered from 21 raw inputs
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom: full-width graphic card with visual bars -->
+      <div style="
+        background: #0a0a0a;
+        border-radius: 20px;
+        padding: 28px 28px 24px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      ">
+        <span style="font-size:10px;font-weight:700;color:#4b5563;
+                     letter-spacing:0.12em;text-transform:uppercase;">
+          Churn Risk Distribution &mdash; 1,761 Test Customers
+        </span>
+
+        <!-- Visual bar chart -->
+        <div style="display:flex;flex-direction:column;gap:10px;margin:16px 0 8px;">
+
+          <!-- Critical -->
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:11px;color:#6b7280;width:68px;flex-shrink:0;">Critical</span>
+            <div style="flex:1;background:#1a1a1a;border-radius:4px;height:8px;overflow:hidden;">
+              <div id="bar-critical" style="width:0%;background:#ef4444;height:100%;
+                          border-radius:4px;transition:width 1s ease 0.2s;"></div>
+            </div>
+            <span style="font-size:12px;font-weight:700;color:#fff;width:28px;text-align:right;">0.9%</span>
+          </div>
+
+          <!-- At-Risk -->
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:11px;color:#6b7280;width:68px;flex-shrink:0;">At-Risk</span>
+            <div style="flex:1;background:#1a1a1a;border-radius:4px;height:8px;overflow:hidden;">
+              <div id="bar-atrisk" style="width:0%;background:#f59e0b;height:100%;
+                          border-radius:4px;transition:width 1s ease 0.35s;"></div>
+            </div>
+            <span style="font-size:12px;font-weight:700;color:#fff;width:28px;text-align:right;">2.2%</span>
+          </div>
+
+          <!-- Watch -->
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:11px;color:#6b7280;width:68px;flex-shrink:0;">Watch</span>
+            <div style="flex:1;background:#1a1a1a;border-radius:4px;height:8px;overflow:hidden;">
+              <div id="bar-watch" style="width:0%;background:#8b5cf6;height:100%;
+                          border-radius:4px;transition:width 1s ease 0.5s;"></div>
+            </div>
+            <span style="font-size:12px;font-weight:700;color:#fff;width:28px;text-align:right;">27.1%</span>
+          </div>
+
+          <!-- Safe -->
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:11px;color:#6b7280;width:68px;flex-shrink:0;">Safe</span>
+            <div style="flex:1;background:#1a1a1a;border-radius:4px;height:8px;overflow:hidden;">
+              <div id="bar-safe" style="width:0%;background:#22c55e;height:100%;
+                          border-radius:4px;transition:width 1s ease 0.65s;"></div>
+            </div>
+            <span style="font-size:12px;font-weight:700;color:#fff;width:36px;text-align:right;">69.8%</span>
+          </div>
+
+        </div>
+
+        <!-- Bottom stats row -->
+        <div style="display:flex;gap:28px;padding-top:12px;
+                    border-top:1px solid #1f1f1f;">
+          <div>
+            <div style="font-size:22px;font-weight:800;color:#fff;
+                        letter-spacing:-0.02em;">{{ revenue_exposure }}</div>
+            <div style="font-size:10px;color:#4b5563;margin-top:2px;">revenue at risk</div>
           </div>
           <div>
-            <label style="display: block; font-weight: 600; margin-bottom: 8px;">Success rate (%)</label>
-            <input type="number" id="roi-rate" value="30" min="0" max="100" oninput="updateROI()" />
+            <div style="font-size:22px;font-weight:800;color:#fff;
+                        letter-spacing:-0.02em;">{{ at_risk_count }}</div>
+            <div style="font-size:10px;color:#4b5563;margin-top:2px;">need action now</div>
+          </div>
+          <div>
+            <div style="font-size:22px;font-weight:800;color:#fff;
+                        letter-spacing:-0.02em;">{{ auc_roc }}</div>
+            <div style="font-size:10px;color:#4b5563;margin-top:2px;">AUC-ROC</div>
+          </div>
+          <div>
+            <div style="font-size:22px;font-weight:800;color:#fff;
+                        letter-spacing:-0.02em;">{{ auc_pr }}</div>
+            <div style="font-size:10px;color:#4b5563;margin-top:2px;">AUC-PR</div>
           </div>
         </div>
-        <div>
-          <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 12px; padding: 16px; margin-bottom: 12px;">
-            <div style="font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Campaign Cost</div>
-            <div style="font-size: 28px; font-weight: 800; color: var(--blue);" id="roi-cost-out">-</div>
-          </div>
-          <div style="background: #f0fdf4; border: 1px solid #bfdbfe; border-radius: 12px; padding: 16px; margin-bottom: 12px;">
-            <div style="font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Revenue Saved</div>
-            <div style="font-size: 28px; font-weight: 800; color: var(--green);" id="roi-rev-out">-</div>
-          </div>
-          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 16px;">
-            <div style="font-size: 11px; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Net Return</div>
-            <div style="font-size: 28px; font-weight: 800; color: var(--blue);" id="roi-net-out">-</div>
-          </div>
-        </div>
+
       </div>
+
     </div>
   </div>
 
-  <!-- Customer Lookup -->
-  <div class="view" id="view-lookup">
-    <div class="page-title">Customer Lookup</div>
-    <div class="page-sub">Score any customer in real time</div>
+  <!-- BOTTOM BAR: empty, just spacing -->
+  <div style="padding:14px 52px;flex-shrink:0;"></div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-      <div class="card">
-        <div class="card-title">Customer Details</div>
-        <div style="margin-bottom: 16px;">
-          <label>Tenure (months)</label>
-          <input type="number" id="f-tenure" value="12" min="0" />
-        </div>
-        <div style="margin-bottom: 16px;">
-          <label>Monthly Bill ($)</label>
-          <input type="number" id="f-monthly" value="65" min="0" />
-        </div>
-        <div style="margin-bottom: 16px;">
-          <label>Total Paid ($)</label>
-          <input type="number" id="f-total" value="780" min="0" />
-        </div>
-        <div style="margin-bottom: 16px;">
-          <label>Contract Type</label>
-          <select id="f-contract">
-            <option value="month">Month-to-month</option>
-            <option value="one">1 year</option>
-            <option value="two">2 year</option>
-          </select>
-        </div>
-        <button onclick="analyzeLookup()" style="width: 100%;">Analyze Risk</button>
-        <div id="lookup-error" style="color: var(--red); font-size: 12px; margin-top: 8px;"></div>
-      </div>
-      <div class="card" id="lookup-result">
-        <div class="empty">Click "Analyze Risk" to see prediction</div>
-      </div>
-    </div>
-  </div>
-
-</main>
+</div>
 
 <script>
-// ========== UTILITY ==========
-const showAlert = (msg, type = 'error') => {
-  const alert = document.getElementById('alert');
-  alert.textContent = msg;
-  alert.className = 'show ' + type;
-  setTimeout(() => alert.classList.remove('show'), 5000);
+setTimeout(function() {
+  var b = document.getElementById('bar-critical');
+  if (b) b.style.width = '0.85%';
+  b = document.getElementById('bar-atrisk');
+  if (b) b.style.width = '2.2%';
+  b = document.getElementById('bar-watch');
+  if (b) b.style.width = '27%';
+  b = document.getElementById('bar-safe');
+  if (b) b.style.width = '69.8%';
+}, 300);
+</script>
+
+<!-- DASHBOARD -->
+<div id="dashboard-screen" style="display: none;">
+  <aside class="sidebar">
+    <!-- Brand -->
+    <div style="padding: 20px 20px 16px; border-bottom: 1px solid #f0f0f0;">
+      <div style="font-size: 14px; font-weight: 700; color: #0a0a0a; letter-spacing: -0.01em;">
+        Customer Churn Prediction
+      </div>
+    </div>
+
+    <!-- Back button -->
+    <div style="padding: 12px 12px 4px;">
+      <button onclick="goBack()" style="
+        width: 100%;
+        padding: 10px 26px;
+        font-size: 13px;
+        font-weight: 600;
+        color: white;
+        background: #0a0a0a;
+        border: none;
+        border-radius: 100px;
+        cursor: pointer;
+        text-align: center;
+        font-family: inherit;
+      ">Back</button>
+    </div>
+
+    <!-- Nav -->
+    <nav style="padding: 16px 8px; display: flex; flex-direction: column; gap: 2px;">
+      <div style="font-size: 10px; font-weight: 600; color: #9ca3af; letter-spacing: 0.1em; padding: 0 12px; margin-bottom: 4px; text-transform: uppercase;">
+        Analysis
+      </div>
+      <div class="nav-item active" onclick="switchTab('overview')" data-tab="overview">Overview</div>
+      <div class="nav-item" onclick="switchTab('risk')" data-tab="risk">Risk Analysis</div>
+      <div class="nav-item" onclick="switchTab('revenue')" data-tab="revenue">Revenue Impact</div>
+
+      <div style="font-size: 10px; font-weight: 600; color: #9ca3af; letter-spacing: 0.1em; padding: 8px 12px 4px; text-transform: uppercase;">
+        Tools
+      </div>
+      <div class="nav-item" onclick="switchTab('lookup')" data-tab="lookup">Customer Lookup</div>
+    </nav>
+  </aside>
+
+  <main class="dashboard-main">
+    <!-- OVERVIEW TAB -->
+    <div class="view active" data-view="overview">
+      <div class="page-header">
+        <div class="page-title">Overview</div>
+        <div class="page-subtitle">Model predictions on 1,761 test-set customers</div>
+      </div>
+
+      <div class="page-content">
+        <div class="kpi-grid">
+          <div class="kpi-card blue">
+            <div class="kpi-label">Total Customers</div>
+            <div class="kpi-value">{{ total_customers }}</div>
+            <div class="kpi-sub">customers scored</div>
+          </div>
+          <div class="kpi-card red">
+            <div class="kpi-label">High Risk</div>
+            <div class="kpi-value">{{ at_risk_pct }}</div>
+            <div class="kpi-sub">of customer base at risk</div>
+          </div>
+          <div class="kpi-card amber">
+            <div class="kpi-label">Revenue at Risk</div>
+            <div class="kpi-value">{{ revenue_exposure }}</div>
+            <div class="kpi-sub">{{ revenue_exposure_pct }} of revenue at risk</div>
+          </div>
+          <div class="kpi-card green">
+            <div class="kpi-label">Estimated Saves</div>
+            <div class="kpi-value">{{ potential_saves }}</div>
+            <div class="kpi-sub">at 30% retention success rate</div>
+          </div>
+        </div>
+
+        <div class="chart-grid">
+          <div class="chart-card">
+            <div class="chart-title">Risk Distribution</div>
+            <div class="chart-container">
+              <canvas id="chart-risk" height="240"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-title">Why Customers Leave</div>
+            <div class="chart-container">
+              <canvas id="chart-drivers" height="240"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-header">
+            <div class="table-title">Top Customers at Risk</div>
+            <div class="table-subtitle">Ranked by churn probability and revenue exposure</div>
+          </div>
+          <div id="priority-table" class="loading"><span class="spinner"></span>Loading priority customers...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RISK ANALYSIS TAB -->
+    <div class="view" data-view="risk">
+      <div class="page-header">
+        <div class="page-title">Risk Analysis</div>
+        <div class="page-subtitle">All 1,761 customers ranked by churn risk</div>
+      </div>
+
+      <div class="page-content">
+        <div class="risk-summary">
+          <div class="risk-stat critical">
+            <div class="risk-stat-tier">Critical</div>
+            <div class="risk-stat-count">{{ risk_critical }}</div>
+            <div class="risk-stat-revenue">$27,448</div>
+          </div>
+          <div class="risk-stat at-risk">
+            <div class="risk-stat-tier">At-Risk</div>
+            <div class="risk-stat-count">{{ risk_high }}</div>
+            <div class="risk-stat-revenue">$53,749</div>
+          </div>
+          <div class="risk-stat watch">
+            <div class="risk-stat-tier">Watch</div>
+            <div class="risk-stat-count">{{ risk_medium }}</div>
+            <div class="risk-stat-revenue">$394,197</div>
+          </div>
+          <div class="risk-stat safe">
+            <div class="risk-stat-tier">Safe</div>
+            <div class="risk-stat-count">{{ risk_low }}</div>
+            <div class="risk-stat-revenue">$223,716</div>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <button class="filter-btn active" onclick="filterRiskTable('all')">All Customers</button>
+          <button class="filter-btn" onclick="filterRiskTable('CRITICAL')">Critical</button>
+          <button class="filter-btn" onclick="filterRiskTable('AT-RISK')">At-Risk</button>
+          <button class="filter-btn" onclick="filterRiskTable('WATCH')">Watch</button>
+          <button class="filter-btn" onclick="filterRiskTable('SAFE')">Safe</button>
+        </div>
+
+        <div class="table-container">
+          <div id="risk-table" class="loading"><span class="spinner"></span>Loading customer data...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVENUE IMPACT TAB -->
+    <div class="view" data-view="revenue">
+      <div class="page-header">
+        <div class="page-title">Revenue Impact</div>
+        <div class="page-subtitle">Calculate ROI before committing budget</div>
+      </div>
+
+      <div class="page-content">
+        <div class="context-card" style="background: #f8f8f8; border: 1px solid #e5e7eb; border-left: none;">
+          The telecom industry spends $300–600 per customer to acquire new subscribers. A targeted contact costs $25. At 30% success rate, every dollar spent on retention saves $17 in acquisition costs.
+        </div>
+
+        <div class="roi-calc">
+          <h3 style="margin-bottom: 20px; font-size: 15px; font-weight: 700;">ROI Calculator</h3>
+          <div class="roi-inputs">
+            <div class="input-group">
+              <label>Customers to contact</label>
+              <input id="roi-customers" type="number" value="0" min="0" max="1000">
+              <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">Currently 54 are above the risk threshold</div>
+            </div>
+            <div class="input-group">
+              <label>Cost per contact</label>
+              <input id="roi-cost" type="number" value="0" min="0" max="500">
+              <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">Industry average for retention outreach</div>
+            </div>
+            <div class="input-group">
+              <label>Success rate (%)</label>
+              <input id="roi-rate" type="number" value="0" min="0" max="100">
+              <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">How many contacts you expect to retain</div>
+            </div>
+          </div>
+          <button class="calc-btn" onclick="calculateROI()" style="width: 100%;">Calculate</button>
+        </div>
+
+        <div id="roi-results">
+          <div class="roi-results">
+            <div class="roi-card">
+              <div class="roi-label">Campaign Cost</div>
+              <div class="roi-value" id="roi-cost-value">-</div>
+            </div>
+            <div class="roi-card">
+              <div class="roi-label">Revenue Saved</div>
+              <div class="roi-value" id="roi-saved-value">-</div>
+            </div>
+            <div class="roi-card">
+              <div class="roi-label">Net Return</div>
+              <div class="roi-value" id="roi-net-value">-</div>
+            </div>
+            <div class="roi-card">
+              <div class="roi-label">Return Multiple</div>
+              <div class="roi-value" id="roi-multiple-value">-</div>
+            </div>
+          </div>
+
+          <div class="info-box" id="roi-info-box" style="display: none;">
+            Even at 10% success, this campaign returns 501% ROI. At 50% it returns 2,907%. The 30% estimate is based on industry averages for telecom retention.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOMER LOOKUP TAB -->
+    <div class="view" data-view="lookup">
+      <div class="page-header">
+        <div class="page-title">Score a Customer</div>
+        <div class="page-subtitle">Enter details below to see their churn probability and what action to take.</div>
+      </div>
+
+      <div class="page-content">
+        <div class="lookup-grid">
+          <div class="form-card" style="padding: 24px;">
+            <div class="form-grid">
+              <div class="form-field">
+                <label>Tenure (months)</label>
+                <input id="lookup-tenure" type="number" value="0" min="0" max="72">
+              </div>
+              <div class="form-field">
+                <label>Monthly Charges</label>
+                <input id="lookup-charges" type="number" value="0" min="0" max="200" step="0.01">
+              </div>
+              <div class="form-field">
+                <label>Total Charges</label>
+                <input id="lookup-total" type="number" value="0" min="0" max="10000" step="0.01">
+              </div>
+              <div class="form-field">
+                <label>Senior Citizen</label>
+                <select id="lookup-senior">
+                  <option value="0">No</option>
+                  <option value="1">Yes</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>Contract Type</label>
+                <select id="lookup-contract">
+                  <option value="1">Month-to-month</option>
+                  <option value="0">Annual or longer</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>Internet Service</label>
+                <select id="lookup-internet">
+                  <option value="2">Fiber optic</option>
+                  <option value="1">DSL</option>
+                  <option value="0">No internet</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>Online Security</label>
+                <select id="lookup-security">
+                  <option value="0">No</option>
+                  <option value="1">Yes</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>Tech Support</label>
+                <select id="lookup-support">
+                  <option value="0">No</option>
+                  <option value="1">Yes</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>Payment Method</label>
+                <select id="lookup-payment">
+                  <option value="3">Electronic check</option>
+                  <option value="0">Bank transfer</option>
+                  <option value="1">Credit card</option>
+                  <option value="2">Mailed check</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>Number of Add-on Services (0-7)</label>
+                <input id="lookup-addons" type="number" value="0" min="0" max="7">
+              </div>
+            </div>
+            <button class="analyze-btn" onclick="analyzeLookup()">Check Risk Score</button>
+          </div>
+
+          <div id="lookup-result" style="display: none; padding: 0;" class="result-card">
+            <div style="text-align: center; width: 100%;">
+              <div class="result-prob">
+                <span id="lookup-prob">-</span>%
+              </div>
+              <div style="margin-bottom: 16px;">
+                <span id="lookup-tier" class="badge">-</span>
+              </div>
+              <div style="margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--gray-200);">
+                <div style="font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">Revenue at Risk (24 months)</div>
+                <div style="font-size: 18px; font-weight: 800;" id="lookup-revenue">-</div>
+              </div>
+              <div class="result-offer">
+                <strong>Recommended Action:</strong>
+                <div style="margin-top: 8px;" id="lookup-action">-</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="lookup-empty" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 12px; color: #9ca3af; padding: 0;">
+            <div style="font-size: 48px; opacity: 0.3;">&#128101;</div>
+            <div style="font-size: 14px; font-weight: 500; color: #374151;">No customer selected</div>
+            <div style="font-size: 13px; text-align: center; max-width: 200px; line-height: 1.5;">Fill in the details and click Check Risk Score</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+var RISK = {
+  labels: ["Critical", "At-Risk", "Watch", "Safe"],
+  values: [{{ risk_critical }}, {{ risk_high }}, {{ risk_medium }}, {{ risk_low }}],
+  colors: ["#ef4444", "#f59e0b", "#8b5cf6", "#22c55e"]
 };
 
-const $$ = (n) => '$' + (n || 0).toLocaleString('en', { maximumFractionDigits: 0 });
-const pct = (n) => ((n || 0) * 100).toFixed(1) + '%';
+var DRIVERS = {
+  labels: [
+    "Month-to-month contract",
+    "High bill vs tenure",
+    "Fiber without support",
+    "New customer",
+    "Electronic check"
+  ],
+  values: [47, 38, 31, 28, 19],
+  color: "#3b82f6"
+};
 
-// ========== API CALLS ==========
-async function api(path, options = {}) {
-  try {
-    const response = await fetch(path, {
-      ...options,
-      headers: { 'Content-Type': 'application/json', ...options.headers }
-    });
+var riskTableLoaded = false;
+var riskTableData = [];
+var currentRiskFilter = 'all';
 
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`${response.status}: ${error}`);
-    }
+function switchTab(tabName) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelector('[data-view="' + tabName + '"]').classList.add('active');
 
-    return await response.json();
-  } catch (error) {
-    console.error('API Error:', path, error);
-    showAlert('API Error: ' + error.message, 'error');
-    return null;
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.querySelector('[data-tab="' + tabName + '"]').classList.add('active');
+
+  if (tabName === 'risk' && !riskTableLoaded) {
+    loadRiskTable();
+  }
+
+  if (tabName === 'revenue') {
+    calculateROI();
   }
 }
 
-// ========== STATE ==========
-let globalData = null;
-let allRisk = [];
-let currentPage = 0;
-const ROWS_PER_PAGE = 25;
-let charts = {};
-
-const FALLBACK_DATA = {
-  total_customers: 1761,
-  overall_churn_rate: 0.18,
-  total_revenue_at_risk: 699000,
-  customers_needing_action: 54,
-  potential_saves: 210000,
-  segments: {
-    CRITICAL: { count: 15, total_revenue_at_risk: 27000 },
-    'AT-RISK': { count: 39, total_revenue_at_risk: 54000 },
-    WATCH: { count: 477, total_revenue_at_risk: 394000 },
-    SAFE: { count: 1230, total_revenue_at_risk: 224000 }
-  },
-  top_feature_importances: {
-    monthly_charge_per_tenure: 0.12,
-    is_month_to_month: 0.09,
-    unprotected_fiber: 0.07,
-    tenure: 0.05
-  }
-};
-
-// ========== UI HELPERS ==========
-function showView(name) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-  const viewEl = document.getElementById('view-' + name);
-  if (viewEl) viewEl.classList.add('active');
-
-  const navEl = document.querySelector(`[data-view="${name}"]`);
-  if (navEl) navEl.classList.add('active');
-
-  if (name === 'revenue') updateROI();
-  if (name === 'risk') loadRiskTable();
+function showDashboard() {
+  document.getElementById('landing-screen').style.display = 'none';
+  var dash = document.getElementById('dashboard-screen');
+  if (dash) dash.style.display = 'flex';
+  initCharts();
 }
 
-// ========== OVERVIEW ==========
-async function loadGlobal() {
-  console.log('Loading global data...');
-  const data = await api('/insights/global');
+function closeDashboard() {
+  document.getElementById('landing-screen').style.display = 'flex';
+  document.getElementById('dashboard-screen').style.display = 'none';
+}
 
-  if (data) {
-    globalData = data;
-    console.log('API data loaded:', data);
-  } else {
-    globalData = FALLBACK_DATA;
-    showAlert('Using fallback data — API unavailable', 'warning');
-  }
+function goBack() {
+  document.getElementById('dashboard-screen').style.display = 'none';
+  document.getElementById('landing-screen').style.display = 'flex';
+}
 
-  // Populate KPIs
-  const els = {
-    'kpi-total': globalData.total_customers,
-    'kpi-action-count': globalData.customers_needing_action || 0,
-    'kpi-revenue-risk': globalData.total_revenue_at_risk,
-    'kpi-potential-saves': globalData.potential_saves
-  };
-
-  for (const [id, val] of Object.entries(els)) {
-    const el = document.getElementById(id);
-    if (el) {
-      if (id === 'kpi-revenue-risk' || id === 'kpi-potential-saves') {
-        el.textContent = $$(val);
-      } else {
-        el.textContent = (val || 0).toLocaleString();
-      }
-    }
-  }
-
-  // Charts
-  const segs = globalData.segments || {};
-  const labels = ['CRITICAL', 'AT-RISK', 'WATCH', 'SAFE'];
-  const counts = labels.map(l => (segs[l] || {}).count || 0);
-  const cols = { CRITICAL: '#ef4444', 'AT-RISK': '#eab308', WATCH: '#a78bfa', SAFE: '#22c55e' };
-
-  // Donut
-  const donutEl = document.getElementById('chart-donut');
-  if (donutEl && donutEl.parentElement) {
-    if (charts.donut) charts.donut.destroy();
-    const ctx = donutEl.getContext('2d');
-    charts.donut = new Chart(ctx, {
+function initCharts() {
+  var riskCtx = document.getElementById('chart-risk');
+  if (riskCtx && !riskCtx._chart) {
+    new Chart(riskCtx, {
       type: 'doughnut',
       data: {
-        labels,
+        labels: RISK.labels,
         datasets: [{
-          data: counts,
-          backgroundColor: labels.map(l => cols[l]),
+          data: RISK.values,
+          backgroundColor: RISK.colors,
           borderColor: '#fff',
           borderWidth: 2
         }]
       },
       options: {
-        cutout: '65%',
         responsive: true,
-        maintainAspectRatio: true,
-        plugins: { legend: { position: 'bottom', labels: { padding: 16 } } }
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { font: { size: 12 }, padding: 16, usePointStyle: true }
+          }
+        }
       }
     });
+    riskCtx._chart = true;
   }
 
-  // Importance
-  const fi = globalData.top_feature_importances || {};
-  const keys = Object.keys(fi).slice(0, 8);
-  const vals = keys.map(k => fi[k]);
-  const impEl = document.getElementById('chart-importance');
-  if (impEl && impEl.parentElement) {
-    if (charts.imp) charts.imp.destroy();
-    const ctx = impEl.getContext('2d');
-    charts.imp = new Chart(ctx, {
+  var driversCtx = document.getElementById('chart-drivers');
+  if (driversCtx && !driversCtx._chart) {
+    new Chart(driversCtx, {
       type: 'bar',
       data: {
-        labels: keys,
-        datasets: [{ data: vals, backgroundColor: '#0ea5e9', borderRadius: 6 }]
+        labels: DRIVERS.labels,
+        datasets: [{
+          label: 'Customers Affected',
+          data: DRIVERS.values,
+          backgroundColor: DRIVERS.color,
+          borderRadius: 6
+        }]
       },
       options: {
         indexAxis: 'y',
         responsive: true,
-        maintainAspectRatio: true,
-        plugins: { legend: { display: false } },
-        scales: { x: { beginAtZero: true }, y: { grid: { display: false } } }
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: { font: { size: 11 } },
+            title: { display: true, text: 'Number of Customers' }
+          }
+        }
       }
     });
+    driversCtx._chart = true;
   }
 }
 
-// ========== RISK TABLE ==========
-async function loadRiskTable() {
-  const tier = document.getElementById('tier-filter').value;
-  const url = tier ? `/insights/all-customers?tier=${tier}` : '/insights/all-customers';
-  const data = await api(url);
+function loadRiskTable() {
+  var container = document.getElementById('risk-table');
+  container.innerHTML = '<div class="loading"><span class="spinner"></span>Loading customer data...</div>';
 
-  if (!data) {
-    document.getElementById('risk-tbody').innerHTML = '<tr><td colspan="5" class="empty">Failed to load customers</td></tr>';
-    return;
-  }
-
-  allRisk = data.customers || [];
-  currentPage = 0;
-  renderRisk();
-}
-
-function renderRisk() {
-  const tbody = document.getElementById('risk-tbody');
-  if (!allRisk.length) {
-    tbody.innerHTML = '<tr><td colspan="5" class="empty">No customers</td></tr>';
-    return;
-  }
-
-  const start = currentPage * ROWS_PER_PAGE;
-  const rows = allRisk.slice(start, start + ROWS_PER_PAGE);
-  const cols = { CRITICAL: '#ef4444', 'AT-RISK': '#eab308', WATCH: '#a78bfa', SAFE: '#22c55e' };
-  const badges = { CRITICAL: 'b-critical', 'AT-RISK': 'b-at-risk', WATCH: 'b-watch', SAFE: 'b-safe' };
-
-  tbody.innerHTML = rows.map(r => `
-    <tr>
-      <td>${r.customer_index}</td>
-      <td style="font-weight: 600;">${((r.churn_probability || 0) * 100).toFixed(0)}%</td>
-      <td>${$$(r.projected_clv || 0)}</td>
-      <td style="color: var(--red); font-weight: 600;">${$$(r.revenue_at_risk || 0)}</td>
-      <td><span class="badge ${badges[r.risk_tier] || 'b-safe'}">${r.risk_tier}</span></td>
-    </tr>
-  `).join('');
-}
-
-function filterRiskTable() {
-  loadRiskTable();
-}
-
-// ========== ROI ==========
-function updateROI() {
-  const n = parseInt(document.getElementById('roi-slider').value) || 0;
-  const cost = parseFloat(document.getElementById('roi-cost').value) || 0;
-  const rate = (parseFloat(document.getElementById('roi-rate').value) || 0) / 100;
-
-  if (n === 0 || cost === 0) {
-    document.getElementById('roi-cost-out').textContent = '-';
-    document.getElementById('roi-rev-out').textContent = '-';
-    document.getElementById('roi-net-out').textContent = '-';
-    return;
-  }
-
-  setTimeout(() => fetchROI(n, cost, rate), 100);
-}
-
-async function fetchROI(n, cost, rate) {
-  const url = `/insights/roi?n_customers=${n}&cost_per_contact=${cost}&retention_rate=${rate}`;
-  const data = await api(url);
-
-  if (data) {
-    document.getElementById('roi-cost-out').textContent = $$(data.total_campaign_cost);
-    document.getElementById('roi-rev-out').textContent = $$(data.expected_revenue_saved);
-    document.getElementById('roi-net-out').textContent = $$(data.net_roi);
-  }
-}
-
-// ========== LOOKUP ==========
-function buildPayload() {
-  return {
-    tenure: parseFloat(document.getElementById('f-tenure').value) || 12,
-    MonthlyCharges: parseFloat(document.getElementById('f-monthly').value) || 65,
-    TotalCharges: parseFloat(document.getElementById('f-total').value) || 780,
-    is_month_to_month: document.getElementById('f-contract').value === 'month' ? 1 : 0,
-    SeniorCitizen: 0, gender: 0, Partner: 0, Dependents: 0,
-    PhoneService: 1, MultipleLines: 0, OnlineSecurity: 0,
-    OnlineBackup: 0, DeviceProtection: 0, TechSupport: 0,
-    StreamingTV: 0, StreamingMovies: 0, PaperlessBilling: 1,
-    is_honeymoon_period: parseFloat(document.getElementById('f-tenure').value) < 6 ? 1 : 0,
-    unprotected_fiber: 0, monthly_charge_per_tenure: 5,
-    service_bundle_depth: 1, is_auto_pay: 0,
-    'Contract_Month-to-month': document.getElementById('f-contract').value === 'month' ? 1 : 0,
-    'Contract_One year': document.getElementById('f-contract').value === 'one' ? 1 : 0,
-    'Contract_Two year': document.getElementById('f-contract').value === 'two' ? 1 : 0,
-    'InternetService_DSL': 0, 'InternetService_Fiber optic': 0, 'InternetService_No': 0,
-    'PaymentMethod_Bank transfer (automatic)': 0, 'PaymentMethod_Credit card (automatic)': 0,
-    'PaymentMethod_Electronic check': 0, 'PaymentMethod_Mailed check': 0,
-  };
-}
-
-async function analyzeLookup() {
-  const btn = document.getElementById('lookup-btn') || document.querySelector('button');
-  const err = document.getElementById('lookup-error');
-  err.textContent = '';
-
-  if (btn) { btn.disabled = true; btn.textContent = 'Analyzing...'; }
-
-  try {
-    const resp = await fetch('/predict', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(buildPayload())
+  fetch('/insights/all-customers?limit=1000')
+    .then(r => {
+      if (!r.ok) throw new Error('Failed to load');
+      return r.json();
+    })
+    .then(data => {
+      riskTableData = data.customers || [];
+      riskTableLoaded = true;
+      renderRiskTable();
+    })
+    .catch(e => {
+      var el = document.getElementById('risk-table');
+      if (el) {
+        el.innerHTML = '<div class="loading" style="color: var(--red-600);">Error loading data: ' + e.message + '</div>';
+      }
     });
-
-    if (!resp.ok) throw new Error(await resp.text());
-
-    const data = await resp.json();
-    const prob = (data.churn_probability || 0) * 100;
-    const tier = data.risk_tier || 'SAFE';
-    const cols = { CRITICAL: '#ef4444', 'AT-RISK': '#eab308', WATCH: '#a78bfa', SAFE: '#22c55e' };
-
-    document.getElementById('lookup-result').innerHTML = `
-      <div style="text-align: center; padding: 24px 0;">
-        <div style="font-size: 56px; font-weight: 800; color: ${cols[tier]}; letter-spacing: -2px;">${prob.toFixed(0)}%</div>
-        <div style="color: #64748b; font-size: 14px; margin-top: 8px;">churn risk</div>
-      </div>
-      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
-        <span class="badge ${tier === 'CRITICAL' ? 'b-critical' : tier === 'AT-RISK' ? 'b-at-risk' : tier === 'WATCH' ? 'b-watch' : 'b-safe'}">${tier}</span>
-        <div style="margin-top: 16px; font-size: 13px; color: #64748b;">
-          ${data.recommended_action || 'No action needed'}
-        </div>
-      </div>
-    `;
-  } catch (e) {
-    err.textContent = 'Error: ' + e.message;
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = 'Analyze Risk'; }
-  }
 }
 
-// ========== INIT ==========
-document.addEventListener('DOMContentLoaded', async () => {
-  console.log('🚀 ChurnSense initializing...');
-
-  try {
-    await loadGlobal();
-    console.log('✅ Global data loaded');
-  } catch (e) {
-    console.error('❌ Failed to load global data:', e);
-    showAlert('Failed to load dashboard data', 'error');
+function renderRiskTable() {
+  var filtered = riskTableData;
+  if (currentRiskFilter !== 'all') {
+    filtered = riskTableData.filter(c => c.risk_tier === currentRiskFilter);
   }
 
-  try {
-    await fetchROI(54, 25, 0.30);
-    console.log('✅ ROI calculated');
-  } catch (e) {
-    console.error('⚠️  ROI calculation failed:', e);
+  if (filtered.length === 0) {
+    document.getElementById('risk-table').innerHTML = '<div class="loading">No customers found</div>';
+    return;
   }
 
-  console.log('✅ Application initialized');
+  var html = '<table class="data-table"><thead><tr><th>Customer ID</th><th>Churn Risk</th><th>Revenue (24mo)</th><th>Exposure</th><th>Risk Tier</th><th>Recommended Action</th></tr></thead><tbody>';
+
+  filtered.forEach(c => {
+    var tierClass = 'badge-safe';
+    if (c.risk_tier === 'CRITICAL') tierClass = 'badge-critical';
+    else if (c.risk_tier === 'AT-RISK') tierClass = 'badge-at-risk';
+    else if (c.risk_tier === 'WATCH') tierClass = 'badge-watch';
+
+    var revenue = "$" + Number(c.revenue_at_risk).toLocaleString("en-US", {maximumFractionDigits: 0});
+
+    var action = '';
+    if (c.risk_tier === 'CRITICAL')
+      action = 'Offer 20% discount + 12-month contract lock';
+    else if (c.risk_tier === 'AT-RISK')
+      action = 'Offer 15% discount + 6-month commitment';
+    else if (c.risk_tier === 'WATCH')
+      action = 'Offer 10% discount to incentivize stay';
+    else action = 'No action needed.';
+
+    html += '<tr onclick="showDetailPanel(' + JSON.stringify(c).replace(/"/g, '&quot;') + ')" style="cursor:pointer;"><td>' + c.customer_id + '</td>';
+    html += '<td>' + (c.churn_probability * 100).toFixed(1) + '%</td>';
+    html += '<td>' + revenue + '</td>';
+    html += '<td>' + revenue + '</td>';
+    html += '<td><span class="badge ' + tierClass + '">' + c.risk_tier + '</span></td>';
+    html += '<td>' + action + '</td></tr>';
+  });
+
+  html += '</tbody></table>';
+  var el = document.getElementById('risk-table');
+  if (el) el.innerHTML = html;
+}
+
+function showDetailPanel(customer) {
+  var panel = document.getElementById('detail-panel') || createDetailPanel();
+  var rec = '';
+  if (customer.risk_tier === 'CRITICAL')
+    rec = 'Offer 20% discount for 12 months + lock-in contract. High urgency — call within 24 hours.';
+  else if (customer.risk_tier === 'AT-RISK')
+    rec = 'Offer 15% discount for 6 months + service upgrade. Send via email + phone follow-up.';
+  else if (customer.risk_tier === 'WATCH')
+    rec = 'Offer 10% discount to incentivize loyalty. Can be sent via email campaign.';
+  else
+    rec = 'No action needed. Customer is stable.';
+
+  panel.innerHTML = '<div style="padding:20px;"><button onclick="closeDetailPanel()" style="background:none;border:none;float:right;font-size:20px;cursor:pointer;">×</button><div style="clear:both;"><div style="font-size:14px;color:#6b7280;margin-bottom:4px;">Churn Probability</div><div style="font-size:42px;font-weight:800;color:#ef4444;margin-bottom:20px;">' + (customer.churn_probability * 100).toFixed(1) + '%</div><div style="font-size:14px;color:#6b7280;margin-bottom:4px;">Revenue at Risk (24mo)</div><div style="font-size:24px;font-weight:700;margin-bottom:20px;">$' + Number(customer.revenue_at_risk).toLocaleString("en-US", {maximumFractionDigits: 0}) + '</div><div style="background:#f8f8f8;border-radius:6px;padding:12px;margin-bottom:16px;"><div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">KEY REASON</div><div style="font-size:13px;color:#374151;">Month-to-month customers without long-term commitment.</div></div><div style="background:#f0fdf4;border-left:3px solid #22c55e;border-radius:6px;padding:12px;"><strong>Recommendation.</strong> ' + rec + '</div></div></div>';
+  panel.style.display = 'block';
+}
+
+function createDetailPanel() {
+  var panel = document.createElement('div');
+  panel.id = 'detail-panel';
+  panel.style.cssText = 'position:absolute;right:20px;top:120px;width:320px;background:white;border:1px solid #e5e7eb;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.1);z-index:50;';
+  document.querySelector('[data-view="risk"]').appendChild(panel);
+  return panel;
+}
+
+function closeDetailPanel() {
+  var panel = document.getElementById('detail-panel');
+  if (panel) panel.style.display = 'none';
+}
+
+function filterRiskTable(tier) {
+  currentRiskFilter = tier;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderRiskTable();
+}
+
+function calculateROI() {
+  var customers = parseInt(document.getElementById('roi-customers').value) || 0;
+  var cost = parseInt(document.getElementById('roi-cost').value) || 0;
+  var rate = parseInt(document.getElementById('roi-rate').value) || 0;
+
+  if (rate < 0 || rate > 100) {
+    alert('Please enter valid values');
+    return;
+  }
+
+  fetch('/insights/roi?customers=' + customers + '&cost=' + cost + '&rate=' + rate)
+    .then(r => {
+      if (!r.ok) throw new Error('Calculation failed');
+      return r.json();
+    })
+    .then(data => {
+      document.getElementById('roi-cost-value').textContent = data.campaign_cost;
+      document.getElementById('roi-saved-value').textContent = data.revenue_saved;
+      document.getElementById('roi-net-value').textContent = data.net_return;
+      document.getElementById('roi-multiple-value').textContent = data.roi_multiple;
+      if (customers > 0 && cost > 0 && rate > 0) {
+        document.getElementById('roi-info-box').style.display = 'block';
+      } else {
+        document.getElementById('roi-info-box').style.display = 'none';
+      }
+    })
+    .catch(e => {
+      alert('Error: ' + e.message);
+    });
+}
+
+function analyzeLookup() {
+  var tenure = parseFloat(document.getElementById('lookup-tenure').value) || 0;
+  var charges = parseFloat(document.getElementById('lookup-charges').value) || 0;
+  var total = parseFloat(document.getElementById('lookup-total').value) || 0;
+  var senior = parseInt(document.getElementById('lookup-senior').value) || 0;
+  var contract = parseInt(document.getElementById('lookup-contract').value) || 0;
+  var internet = parseInt(document.getElementById('lookup-internet').value) || 0;
+  var security = parseInt(document.getElementById('lookup-security').value) || 0;
+  var support = parseInt(document.getElementById('lookup-support').value) || 0;
+  var payment = parseInt(document.getElementById('lookup-payment').value) || 0;
+  var addons = parseInt(document.getElementById('lookup-addons').value) || 0;
+
+  var payload = {
+    tenure: tenure,
+    MonthlyCharges: charges,
+    TotalCharges: total,
+    SeniorCitizen: senior,
+    is_month_to_month: contract,
+    gender: 0,
+    Partner: 0,
+    Dependents: 0,
+    PhoneService: 1,
+    MultipleLines: 0,
+    OnlineSecurity: security,
+    OnlineBackup: 0,
+    DeviceProtection: 0,
+    TechSupport: support,
+    StreamingTV: 0,
+    StreamingMovies: 0,
+    PaperlessBilling: 1,
+    is_honeymoon_period: tenure < 6 ? 1 : 0,
+    unprotected_fiber: 0,
+    monthly_charge_per_tenure: tenure > 0 ? charges / tenure : 0,
+    service_bundle_depth: addons,
+    is_auto_pay: 0
+  };
+
+  fetch('/predict', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+    .then(r => {
+      if (!r.ok) throw new Error('Prediction failed');
+      return r.json();
+    })
+    .then(data => {
+      var tierClass = 'badge-safe';
+      if (data.risk_tier === 'CRITICAL') tierClass = 'badge-critical';
+      else if (data.risk_tier === 'HIGH') tierClass = 'badge-at-risk';
+      else if (data.risk_tier === 'MEDIUM') tierClass = 'badge-watch';
+
+      document.getElementById('lookup-prob').textContent = (data.churn_probability * 100).toFixed(1);
+      document.getElementById('lookup-tier').className = 'badge ' + tierClass;
+      document.getElementById('lookup-tier').textContent = data.risk_tier;
+      var revenue = "$" + Number(data.revenue_at_risk).toLocaleString("en-US", {maximumFractionDigits: 0});
+      document.getElementById('lookup-revenue').textContent = revenue;
+
+      var offer = data.recommended_action;
+      if (data.risk_tier === 'CRITICAL') {
+        offer = "Call and offer to lock in their current rate for 12 months with a free service add-on.";
+      } else if (data.risk_tier === 'HIGH') {
+        offer = "Send a personalized email with a 10% loyalty discount, then follow up by phone if no response within 3 days.";
+      } else if (data.risk_tier === 'MEDIUM') {
+        offer = "Monitor next month. If charges increase or a support ticket opens, move to active outreach.";
+      } else {
+        offer = "No action needed right now.";
+      }
+
+      document.getElementById('lookup-action').textContent = offer;
+
+      document.getElementById('lookup-empty').style.display = 'none';
+      document.getElementById('lookup-result').style.display = 'block';
+    })
+    .catch(e => {
+      alert('Error: ' + e.message);
+    });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  var container = document.getElementById('priority-table');
+  if (container) {
+    container.innerHTML = '<div class="loading"><span class="spinner"></span>Loading priority customers...</div>';
+    fetch('/insights/all-customers?tier=CRITICAL&limit=10')
+      .then(r => r.json())
+      .then(data => {
+        if (data.customers && data.customers.length > 0) {
+          var html = '<table class="data-table"><thead><tr><th>Rank</th><th>Customer ID</th><th>Churn Risk</th><th>Revenue (24mo)</th><th>Exposure</th><th>Tier</th><th>Recommended Action</th></tr></thead><tbody>';
+          data.customers.forEach((c, i) => {
+            var tierClass = 'badge-critical';
+            var revenue = "$" + Number(c.revenue_at_risk).toLocaleString("en-US", {maximumFractionDigits: 0});
+            html += '<tr><td>' + (i+1) + '</td><td>' + c.customer_id + '</td>';
+            html += '<td>' + (c.churn_probability * 100).toFixed(1) + '%</td>';
+            html += '<td>' + revenue + '</td>';
+            html += '<td>' + revenue + '</td>';
+            html += '<td><span class="badge ' + tierClass + '">CRITICAL</span></td>';
+            html += '<td>Offer 20% discount + 12-month contract lock</td></tr>';
+          });
+          html += '</tbody></table>';
+          container.innerHTML = html;
+        } else {
+          container.innerHTML = '<div class="loading">No priority customers found</div>';
+        }
+      })
+      .catch(e => {
+        container.innerHTML = '<div class="loading" style="color: var(--red-600);">Error loading data</div>';
+      });
+  }
 });
 </script>
 

@@ -31,9 +31,11 @@ def test_insights_global():
     assert response.status_code == 200
     data = response.json()
     assert "total_customers" in data
-    assert "at_risk_count" in data
-    assert "revenue_at_risk" in data
-    assert data["model_auc_roc"] == 0.79
+    assert "churned" in data
+    assert "churn_rate_percent" in data
+    assert "data_rows" in data
+    assert data["total_customers"] == data["data_rows"]
+    assert 0 <= data["churn_rate_percent"] <= 100
 
 
 def test_predict():
@@ -53,4 +55,4 @@ def test_predict():
     assert "churn_probability" in data
     assert "risk_tier" in data
     assert 0 <= data["churn_probability"] <= 1
-    assert data["risk_tier"] in ["CRITICAL", "AT-RISK", "SAFE"]
+    assert data["risk_tier"] in ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
