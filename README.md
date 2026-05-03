@@ -61,6 +61,42 @@ The system combines a trained machine learning model, a FastAPI backend, an inte
 | AUC PR | 0.23 |
 | Cost optimized threshold | 0.23 |
 
+## Machine Learning Model Used
+
+This repository contains one final production machine learning model:
+
+| Model | Role | Status |
+| --- | --- | --- |
+| Random Forest Classifier | Final churn prediction model used by the API and dashboard | Deployed in the project |
+
+The saved model artifact is stored in the `models` directory. The model metadata is documented in `models/model_card.json`.
+
+### Final Model Results
+
+| Metric | Result | Meaning |
+| --- | --- | --- |
+| AUC ROC | 0.79 | The model ranks churn risk reasonably well across customers |
+| AUC PR | 0.23 | More useful than accuracy because churn is an imbalanced problem |
+| Precision at threshold 0.23 | 46 percent | 46 percent of flagged customers are expected to churn |
+| Recall at threshold 0.23 | 65 percent | The model catches about 65 percent of churners |
+| Brier score | 0.0794 | Measures probability prediction error |
+| Customers flagged for outreach | 54 | Highest priority customers for retention |
+| Revenue at risk | $81,197 | Estimated revenue exposure from flagged customers |
+| Potential saves | $24,359 | Estimated savings at a 30 percent retention success rate |
+
+### Why Random Forest Classifier
+
+Random Forest was selected as the final production model because it is a strong fit for this type of customer churn dataset.
+
+1. It handles non linear churn patterns, such as the interaction between contract type, tenure, monthly charges, and support services.
+2. It works well with mixed customer features after preprocessing and feature engineering.
+3. It is more robust than a single decision tree because it averages many trees.
+4. It provides probability scores, which are needed for risk ranking and campaign prioritization.
+5. It works well with SMOTE and class weighting, which helps because churn data is imbalanced.
+6. It supports feature importance analysis, which helps explain why customers are being flagged.
+
+The project does not currently include saved result files for other trained models. Because of that, the README reports only the verified Random Forest results that are present in the repository.
+
 ## Main Features
 
 | Feature | Description |
