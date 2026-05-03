@@ -1,4 +1,4 @@
-"""ChurnSense configuration constants"""
+"""Customer churn prediction configuration constants."""
 
 RETENTION_SUCCESS_RATE = 0.30
 OUTREACH_COST_PER_CUSTOMER = 25

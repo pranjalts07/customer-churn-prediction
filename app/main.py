@@ -1,5 +1,5 @@
 """
-ChurnSense API — Production-grade churn prediction service.
+Customer Churn Prediction API.
 Handles customer risk assessment and revenue impact analysis.
 """
 
@@ -51,7 +51,7 @@ MODEL_STATE = {
 
 # Create FastAPI app
 app = FastAPI(
-    title="ChurnSense API",
+    title="Customer Churn Prediction API",
     description="Customer churn prediction with revenue impact",
     version="1.0.0"
 )
@@ -75,7 +75,7 @@ def load_churn_model():
 
     try:
         import joblib
-        model_path = MODELS_DIR / "churnsense_v1.pkl"
+        model_path = MODELS_DIR / "customer_churn_model.pkl"
         logger.info(f"Loading model from: {model_path}")
 
         artifact = joblib.load(model_path)
@@ -143,7 +143,7 @@ async def health_check():
     feature_count = len(MODEL_STATE["feature_names"]) if MODEL_STATE["feature_names"] else 0
     return {
         "status": "ok",
-        "service": "churnsense",
+        "service": "customer-churn-prediction",
         "model": "random_forest_v1",
         "threshold": MODEL_STATE["threshold"],
         "features": feature_count,
@@ -360,7 +360,7 @@ async def serve_dashboard():
 
     except Exception as e:
         logger.error(f"Failed to serve dashboard: {e}")
-        return HTMLResponse("<h1>ChurnSense Dashboard</h1><p>Error loading dashboard</p>", status_code=500)
+        return HTMLResponse("<h1>Customer Churn Prediction Dashboard</h1><p>Error loading dashboard</p>", status_code=500)
 
 
-logger.info("ChurnSense API initialized successfully")
+logger.info("Customer Churn Prediction API initialized successfully")

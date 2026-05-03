@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "ChurnSense Startup"
+echo "Customer Churn Prediction Startup"
 echo "=================="
 
 if [ ! -d "venv" ]; then

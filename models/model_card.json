@@ -1,6 +1,6 @@
 {
   "model": {
-    "name": "ChurnSense",
+    "name": "Customer Churn Prediction",
     "version": "1.0.0",
     "type": "RandomForestClassifier",
     "trained_at": "2026-05-02"

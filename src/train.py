@@ -62,7 +62,7 @@ def main():
     }
 
     Path('models').mkdir(exist_ok=True)
-    joblib.dump(artifact, 'models/churnsense_v1.pkl')
+    joblib.dump(artifact, 'models/customer_churn_model.pkl')
     print("✓ Model trained and saved")
 
 

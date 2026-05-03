@@ -1,4 +1,4 @@
-# Contributing to ChurnSense
+# Contributing to Customer Churn Prediction
 
 ## Development Setup
 
