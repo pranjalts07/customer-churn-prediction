@@ -1,50 +1,47 @@
-# ChurnSense: Production Churn Prediction System
+# Customer Churn Prediction System
 
 [![Python 3.11](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green?logo=fastapi)](https://fastapi.tiangolo.com/)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3.2-orange?logo=scikit-learn)](https://scikit-learn.org/)
-[![Azure App Service](https://img.shields.io/badge/Azure-App%20Service-0078D4?logo=microsoft-azure)](https://azure.microsoft.com/)
 [![License MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-ChurnSense is a production ready customer churn prediction system for telecom retention teams. It predicts churn probability, ranks customers by revenue exposure, recommends retention actions, and estimates campaign return on investment.
-
-Live demo: [https://churn-prediction.azurewebsites.net/](https://churn-prediction.azurewebsites.net/)
+This is a production ready customer churn prediction system for telecom retention teams. It predicts churn probability, ranks customers by revenue exposure, recommends retention actions, and estimates campaign return on investment.
 
 ## Dashboard Preview
 
 ### Landing Page
 
 <p align="center">
-  <img src="Images/Landing%20page.png" alt="ChurnSense landing page" width="900">
+  <img src="Images/Landing%20page.png" alt="Customer churn prediction landing page" width="900">
 </p>
 
 ### Campaign Overview
 
 <p align="center">
-  <img src="Images/Overview.png" alt="ChurnSense campaign overview dashboard" width="900">
+  <img src="Images/Overview.png" alt="Customer churn prediction campaign overview dashboard" width="900">
 </p>
 
 ### Risk Analysis
 
 <p align="center">
-  <img src="Images/Risk%20Analysis.png" alt="ChurnSense risk analysis dashboard" width="900">
+  <img src="Images/Risk%20Analysis.png" alt="Customer churn prediction risk analysis dashboard" width="900">
 </p>
 
 ### Revenue Impact
 
 <p align="center">
-  <img src="Images/Revenue%20Impact.png" alt="ChurnSense revenue impact dashboard" width="900">
+  <img src="Images/Revenue%20Impact.png" alt="Customer churn prediction revenue impact dashboard" width="900">
 </p>
 
 ### Customer Lookup
 
 <p align="center">
-  <img src="Images/Customer%20Lookup.png" alt="ChurnSense customer lookup dashboard" width="900">
+  <img src="Images/Customer%20Lookup.png" alt="Customer churn prediction customer lookup dashboard" width="900">
 </p>
 
 ## What This Project Does
 
-ChurnSense helps answer three business questions:
+This project helps answer three business questions:
 
 1. Which customers are most likely to churn?
 2. Which customers should the retention team contact first?
@@ -158,7 +155,7 @@ Important features include:
 ## Project Structure
 
 ```text
-churnsense/
+customer-churn-prediction/
   app/
     main.py
     templates/
@@ -176,7 +173,7 @@ churnsense/
     Revenue Impact.png
     Customer Lookup.png
   models/
-    churnsense_v1.pkl
+    trained model artifact
     model_card.json
     plots/
   reports/
@@ -229,31 +226,12 @@ python -m pytest
 
 The test suite covers the FastAPI health check, dashboard route, global insights endpoint, and prediction endpoint.
 
-## Deployment
+## Run The Application
 
 ### Local Startup Script
 
 ```bash
 ./startup.sh
-```
-
-### Azure App Service
-
-```bash
-zip -r churn-deploy.zip app/ models/ data/ src/ requirements.txt startup.sh
-```
-
-```bash
-az webapp deployment source config-zip \
-  --resource-group <resource-group> \
-  --name <app-name> \
-  --src churn-deploy.zip
-```
-
-Verify deployment:
-
-```bash
-curl https://your-app.azurewebsites.net/health
 ```
 
 ## Known Limitations
@@ -274,7 +252,6 @@ curl https://your-app.azurewebsites.net/health
 | Data | pandas, numpy, pyarrow |
 | Analysis | SHAP, matplotlib, seaborn |
 | Testing | pytest, FastAPI TestClient |
-| Deployment | Azure App Service |
 
 ## License
 
