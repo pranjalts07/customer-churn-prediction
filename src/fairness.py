@@ -1,4 +1,5 @@
-"""Fairness and bias audit"""
+"""Fairness and bias audit."""
+import joblib
 import pandas as pd
 import numpy as np
 
@@ -56,3 +57,31 @@ def equalized_odds_audit(df, y_true, predictions, sensitive_attr='gender'):
         results[group] = {'tpr': tpr, 'fpr': fpr}
 
     return results
+
+
+def main():
+    """Run a compact fairness audit for the saved production model."""
+    artifact = joblib.load("models/customer_churn_model.pkl")
+    test_df = pd.read_parquet("data/processed/test.parquet")
+    feature_names = artifact["feature_names"]
+    threshold = artifact.get("threshold", 0.28)
+
+    probabilities = artifact["model"].predict_proba(test_df[feature_names])[:, 1]
+    predictions = (probabilities >= threshold).astype(int)
+    y_true = test_df["Churn"].to_numpy()
+
+    parity = demographic_parity_audit(test_df, predictions)
+    odds = equalized_odds_audit(test_df, y_true, predictions, sensitive_attr="gender")
+
+    print("Demographic parity audit")
+    for attr, result in parity.items():
+        rates = ", ".join(f"{group}: {rate:.3f}" for group, rate in result["group_rates"].items())
+        print(f"{attr}: {rates}; disparity {result['disparity']:.3f}; acceptable {result['acceptable']}")
+
+    print("\nEqualized odds audit by gender")
+    for group, result in odds.items():
+        print(f"{group}: TPR {result['tpr']:.3f}; FPR {result['fpr']:.3f}")
+
+
+if __name__ == "__main__":
+    main()

@@ -45,7 +45,7 @@ MODEL_STATE = {
     "scaler": None,
     "feature_names": [],
     "model_name": "logistic_regression_churn_classifier",
-    "threshold": 0.23,
+    "threshold": 0.28,
     "test_df": None,
     "priority_df": None,
     "metadata": {},
@@ -71,7 +71,7 @@ app.add_middleware(
 # SECTION 3: Data loading functions
 
 def load_churn_model():
-    """Load RandomForest model from disk on first use."""
+    """Load the selected churn model from disk on first use."""
     if MODEL_STATE["churn_model"] is not None:
         return
 
@@ -120,23 +120,50 @@ def load_priority_data():
         MODEL_STATE["priority_df"] = None
 
 
+def score_portfolio():
+    """Score the held-out portfolio and assign risk tiers."""
+    load_churn_model()
+    load_test_data()
+
+    if MODEL_STATE["test_df"] is None or MODEL_STATE["churn_model"] is None:
+        return None
+
+    import pandas as pd
+
+    df = MODEL_STATE["test_df"].copy()
+    feature_names = MODEL_STATE["feature_names"]
+    probabilities = MODEL_STATE["churn_model"].predict_proba(df[feature_names])[:, 1]
+    monthly = df["MonthlyCharges_raw"] if "MonthlyCharges_raw" in df.columns else df["MonthlyCharges"]
+    revenue_at_risk = probabilities * monthly.to_numpy() * 24
+    threshold = MODEL_STATE["threshold"]
+
+    scored = pd.DataFrame({
+        "customer_id": range(1, len(df) + 1),
+        "churn_probability": probabilities,
+        "revenue_at_risk": revenue_at_risk,
+        "monthly_charges": monthly.to_numpy(),
+    })
+    scored["risk_tier"] = "SAFE"
+    scored.loc[scored["churn_probability"] >= threshold, "risk_tier"] = "WATCH"
+    scored.loc[scored["churn_probability"] >= 0.40, "risk_tier"] = "AT-RISK"
+    scored.loc[scored["churn_probability"] >= 0.70, "risk_tier"] = "CRITICAL"
+    return scored
+
+
 def get_dashboard_metrics():
     """Calculate dashboard KPI values from priority contact list."""
     load_churn_model()
-    load_priority_data()
     load_test_data()
 
-    priority_df = MODEL_STATE["priority_df"]
+    scored_df = score_portfolio()
     test_df = MODEL_STATE["test_df"]
     metrics = MODEL_STATE["metadata"].get("test_metrics", {})
 
     total_customers = len(test_df) if test_df is not None else 1761
+    threshold = MODEL_STATE["threshold"]
+    priority_df = scored_df[scored_df["churn_probability"] >= threshold] if scored_df is not None else None
     at_risk_count = len(priority_df) if priority_df is not None else int(metrics.get("flagged", 331))
-    revenue_exposure = (
-        float(priority_df["revenue_at_risk"].sum())
-        if priority_df is not None and "revenue_at_risk" in priority_df.columns
-        else float(metrics.get("revenue_at_risk_usd", 365321))
-    )
+    revenue_exposure = float(priority_df["revenue_at_risk"].sum()) if priority_df is not None else float(metrics.get("revenue_at_risk_usd", 365321))
     potential_saves = revenue_exposure * 0.30
 
     if test_df is not None and "MonthlyCharges_raw" in test_df.columns:
@@ -146,7 +173,12 @@ def get_dashboard_metrics():
     else:
         total_revenue = 3172652.40
 
-    tier_counts = priority_df["risk_tier"].value_counts().to_dict() if priority_df is not None else {}
+    tier_counts = scored_df["risk_tier"].value_counts().to_dict() if scored_df is not None else {}
+    tier_revenue = (
+        scored_df.groupby("risk_tier")["revenue_at_risk"].sum().to_dict()
+        if scored_df is not None
+        else {}
+    )
     revenue_exposure_pct = revenue_exposure / total_revenue * 100 if total_revenue else 0
 
     return {
@@ -159,11 +191,11 @@ def get_dashboard_metrics():
         "risk_critical": int(tier_counts.get("CRITICAL", 15)),
         "risk_high": int(tier_counts.get("AT-RISK", 190)),
         "risk_medium": int(tier_counts.get("WATCH", 126)),
-        "risk_low": max(total_customers - at_risk_count, 0),
-        "risk_critical_revenue": f"${float(priority_df.loc[priority_df['risk_tier'] == 'CRITICAL', 'revenue_at_risk'].sum() if priority_df is not None else 0):,.0f}",
-        "risk_high_revenue": f"${float(priority_df.loc[priority_df['risk_tier'] == 'AT-RISK', 'revenue_at_risk'].sum() if priority_df is not None else 0):,.0f}",
-        "risk_medium_revenue": f"${float(priority_df.loc[priority_df['risk_tier'] == 'WATCH', 'revenue_at_risk'].sum() if priority_df is not None else 0):,.0f}",
-        "risk_low_revenue": "$0",
+        "risk_low": int(tier_counts.get("SAFE", max(total_customers - at_risk_count, 0))),
+        "risk_critical_revenue": f"${float(tier_revenue.get('CRITICAL', 0)):,.0f}",
+        "risk_high_revenue": f"${float(tier_revenue.get('AT-RISK', 0)):,.0f}",
+        "risk_medium_revenue": f"${float(tier_revenue.get('WATCH', 0)):,.0f}",
+        "risk_low_revenue": f"${float(tier_revenue.get('SAFE', 0)):,.0f}",
         "auc_roc": f"{float(metrics.get('auc_roc', 0.8024)):.4f}",
         "auc_pr": f"{float(metrics.get('auc_pr', 0.2545)):.4f}",
     }
@@ -211,30 +243,9 @@ async def get_global_insights():
 @app.get("/insights/all-customers")
 async def get_all_customers(tier: Optional[str] = None, limit: int = 100):
     """Return customer list with churn predictions, optionally filtered by risk tier."""
-    load_churn_model()
-    load_test_data()
-
-    if MODEL_STATE["test_df"] is None or MODEL_STATE["churn_model"] is None:
+    scored = score_portfolio()
+    if scored is None:
         raise HTTPException(status_code=503, detail="Model or test data not available")
-
-    import pandas as pd
-
-    df = MODEL_STATE["test_df"].copy()
-    feature_names = MODEL_STATE["feature_names"]
-    probabilities = MODEL_STATE["churn_model"].predict_proba(df[feature_names])[:, 1]
-    monthly = df["MonthlyCharges_raw"] if "MonthlyCharges_raw" in df.columns else df["MonthlyCharges"]
-    revenue = probabilities * monthly.to_numpy() * 24
-    threshold = MODEL_STATE["threshold"]
-
-    scored = pd.DataFrame({
-        "customer_id": range(1, len(df) + 1),
-        "churn_probability": probabilities,
-        "revenue_at_risk": revenue,
-    })
-    scored["risk_tier"] = "SAFE"
-    scored.loc[scored["churn_probability"] >= threshold, "risk_tier"] = "WATCH"
-    scored.loc[scored["churn_probability"] >= 0.40, "risk_tier"] = "AT-RISK"
-    scored.loc[scored["churn_probability"] >= 0.70, "risk_tier"] = "CRITICAL"
 
     if tier and tier.lower() != "all":
         scored = scored[scored["risk_tier"] == tier.upper()]
@@ -255,6 +266,7 @@ async def get_all_customers(tier: Optional[str] = None, limit: int = 100):
         customers.append({
             "customer_id": str(int(row["customer_id"])),
             "churn_probability": round(float(row["churn_probability"]), 4),
+            "projected_revenue_24mo": round(float(row["monthly_charges"] * 24), 2),
             "revenue_at_risk": round(float(row["revenue_at_risk"]), 2),
             "risk_tier": str(row["risk_tier"]),
             "action": action,
@@ -264,28 +276,26 @@ async def get_all_customers(tier: Optional[str] = None, limit: int = 100):
 
 
 @app.get("/insights/roi")
-async def calculate_roi(customers: int = 54, cost: int = 25, rate: int = 30):
+async def calculate_roi(customers: int = 331, cost: int = 25, rate: int = 30):
     """Calculate ROI for retention campaign given customer count, cost, and retention rate."""
     if cost < 0 or rate < 0 or rate > 100:
         raise HTTPException(status_code=400, detail="Invalid parameters")
 
-    load_priority_data()
+    scored = score_portfolio()
+    if scored is None:
+        raise HTTPException(status_code=503, detail="Model or test data not available")
 
-    if MODEL_STATE["priority_df"] is None:
-        raise HTTPException(status_code=503, detail="Priority data not available")
+    priority_df = scored[scored["churn_probability"] >= MODEL_STATE["threshold"]]
+    selected = priority_df.sort_values(["churn_probability", "revenue_at_risk"], ascending=False).head(customers)
+    targeted_customers = len(selected)
 
-    df = MODEL_STATE["priority_df"]
-
-    # Get average revenue at risk for at-risk customers
-    at_risk_df = df[df["risk_tier"].isin(["CRITICAL", "AT-RISK"])]
-    avg_revenue = at_risk_df["revenue_at_risk"].mean() if len(at_risk_df) > 0 else 2000
-
-    total_campaign_cost = customers * cost
-    revenue_saved = customers * (rate / 100) * avg_revenue
+    total_campaign_cost = targeted_customers * cost
+    revenue_saved = selected["revenue_at_risk"].sum() * (rate / 100)
     net_return = revenue_saved - total_campaign_cost
     roi_multiple = net_return / total_campaign_cost if total_campaign_cost > 0 else 0
 
     return {
+        "targeted_customers": targeted_customers,
         "campaign_cost": f"${total_campaign_cost:,.0f}",
         "revenue_saved": f"${revenue_saved:,.0f}",
         "net_return": f"${net_return:,.0f}",
@@ -329,10 +339,10 @@ async def predict_single(customer: CustomerFeatures):
             logger.warning("Model not loaded")
             return {
                 "churn_probability": 0.35,
-                "risk_tier": "MEDIUM",
+                "risk_tier": "WATCH",
                 "projected_clv": round(customer.MonthlyCharges * 24, 2),
                 "revenue_at_risk": round(0.35 * customer.MonthlyCharges * 24, 2),
-                "recommended_action": "Monitor account activity",
+                "recommended_action": "Monitor closely and send proactive retention email",
             }
 
         import pandas as pd
@@ -359,18 +369,20 @@ async def predict_single(customer: CustomerFeatures):
         if churn_prob >= 0.70:
             tier = "CRITICAL"
         elif churn_prob >= 0.40:
-            tier = "HIGH"
-        elif churn_prob >= 0.20:
-            tier = "MEDIUM"
+            tier = "AT-RISK"
+        elif churn_prob >= MODEL_STATE["threshold"]:
+            tier = "WATCH"
         else:
-            tier = "LOW"
+            tier = "SAFE"
 
         if tier == "CRITICAL":
             action = "Immediate personal outreach with retention offer"
-        elif tier == "HIGH":
+        elif tier == "AT-RISK":
             action = "Send personalized email with discount offer"
+        elif tier == "WATCH":
+            action = "Monitor closely and send proactive retention email"
         else:
-            action = "Monitor account activity"
+            action = "No immediate action needed"
 
         return {
             "churn_probability": round(churn_prob, 4),
@@ -384,10 +396,10 @@ async def predict_single(customer: CustomerFeatures):
         logger.error(f"Prediction error: {type(e).__name__}: {e}", exc_info=True)
         return {
             "churn_probability": 0.35,
-            "risk_tier": "MEDIUM",
+            "risk_tier": "WATCH",
             "projected_clv": round(customer.MonthlyCharges * 24, 2),
             "revenue_at_risk": round(0.35 * customer.MonthlyCharges * 24, 2),
-            "recommended_action": "Monitor account activity",
+            "recommended_action": "Monitor closely and send proactive retention email",
         }
 
 

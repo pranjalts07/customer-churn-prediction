@@ -1,6 +1,14 @@
-"""Model evaluation and threshold optimization"""
+"""Model evaluation and threshold optimization."""
 import numpy as np
-from sklearn.metrics import roc_auc_score, precision_recall_curve, auc
+import pandas as pd
+from sklearn.metrics import (
+    auc,
+    f1_score,
+    precision_recall_curve,
+    precision_score,
+    recall_score,
+    roc_auc_score,
+)
 import joblib
 
 
@@ -62,3 +70,33 @@ def get_metrics_at_threshold(y_test, y_pred_proba, threshold):
     recall = tp / (tp + fn) if (tp + fn) > 0 else 0
 
     return {'precision': precision, 'recall': recall, 'tp': tp, 'fp': fp}
+
+
+def main():
+    """Evaluate the saved production model on the processed test set."""
+    artifact = joblib.load("models/customer_churn_model.pkl")
+    test_df = pd.read_parquet("data/processed/test.parquet")
+    feature_names = artifact["feature_names"]
+    threshold = artifact.get("threshold", 0.28)
+
+    X_test = test_df[feature_names]
+    y_test = test_df["Churn"]
+    probabilities = artifact["model"].predict_proba(X_test)[:, 1]
+    predictions = (probabilities >= threshold).astype(int)
+    metrics = evaluate_model(artifact["model"], X_test, y_test)
+    threshold_metrics = get_metrics_at_threshold(y_test, probabilities, threshold)
+
+    print(f"Model: {artifact.get('model_name', 'customer_churn_model')}")
+    print(f"AUC ROC: {metrics['auc_roc']:.4f}")
+    print(f"AUC PR: {metrics['auc_pr']:.4f}")
+    print(f"Threshold: {threshold:.2f}")
+    print(f"Precision: {precision_score(y_test, predictions, zero_division=0):.4f}")
+    print(f"Recall: {recall_score(y_test, predictions, zero_division=0):.4f}")
+    print(f"F1: {f1_score(y_test, predictions, zero_division=0):.4f}")
+    print(f"True positives: {threshold_metrics['tp']}")
+    print(f"False positives: {threshold_metrics['fp']}")
+    print(f"Flagged customers: {int(predictions.sum())}")
+
+
+if __name__ == "__main__":
+    main()

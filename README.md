@@ -107,7 +107,7 @@ The comparison shows that Logistic Regression is the best candidate on the curre
 | --- | --- |
 | Churn prediction API | Scores individual customers using the trained production model |
 | Portfolio dashboard | Shows customer risk, revenue exposure, and campaign metrics |
-| Risk segmentation | Groups customers into critical, high, medium, and low risk tiers |
+| Risk segmentation | Groups customers into critical, at-risk, watch, and safe tiers |
 | Revenue impact analysis | Estimates exposed revenue and expected retention value |
 | ROI calculator | Compares outreach cost against expected saved revenue |
 | Customer lookup | Lets users test churn risk for a single customer profile |
@@ -208,7 +208,7 @@ customer-churn-prediction/
       train.parquet
       test.parquet
   Images/
-    Landing page.png
+    landing page.png
     Overview.png
     Risk Analysis.png
     Revenue Impact.png
@@ -219,8 +219,11 @@ customer-churn-prediction/
     plots/
   reports/
     priority_contact_list.csv
+    model_comparison.csv
+    model_comparison.md
   src/
     calibration.py
+    compare_models.py
     config.py
     data_pipeline.py
     evaluate.py
@@ -247,6 +250,12 @@ Train the model:
 python src/train.py
 ```
 
+Compare candidate models:
+
+```bash
+python src/compare_models.py
+```
+
 Evaluate model performance:
 
 ```bash
@@ -258,6 +267,8 @@ Run fairness checks:
 ```bash
 python src/fairness.py
 ```
+
+The current split uses a deterministic tenure-based holdout: shorter-tenure customers train the model and longer-tenure customers form the test portfolio. This makes the revenue dashboard reproducible and is documented as a limitation in the model card.
 
 ## Testing
 

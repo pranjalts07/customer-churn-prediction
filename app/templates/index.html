@@ -1312,17 +1312,17 @@ setTimeout(function() {
           <div class="roi-inputs">
             <div class="input-group">
               <label>Customers to contact</label>
-              <input id="roi-customers" type="number" value="0" min="0" max="1000">
+              <input id="roi-customers" type="number" value="{{ at_risk_count }}" min="0" max="1000">
               <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">Currently {{ at_risk_count }} are above the optimized risk threshold</div>
             </div>
             <div class="input-group">
               <label>Cost per contact</label>
-              <input id="roi-cost" type="number" value="0" min="0" max="500">
+              <input id="roi-cost" type="number" value="25" min="0" max="500">
               <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">Industry average for retention outreach</div>
             </div>
             <div class="input-group">
               <label>Success rate (%)</label>
-              <input id="roi-rate" type="number" value="0" min="0" max="100">
+              <input id="roi-rate" type="number" value="30" min="0" max="100">
               <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">How many contacts you expect to retain</div>
             </div>
           </div>
@@ -1621,7 +1621,8 @@ function renderRiskTable() {
     else if (c.risk_tier === 'AT-RISK') tierClass = 'badge-at-risk';
     else if (c.risk_tier === 'WATCH') tierClass = 'badge-watch';
 
-    var revenue = "$" + Number(c.revenue_at_risk).toLocaleString("en-US", {maximumFractionDigits: 0});
+    var revenue = "$" + Number(c.projected_revenue_24mo).toLocaleString("en-US", {maximumFractionDigits: 0});
+    var exposure = "$" + Number(c.revenue_at_risk).toLocaleString("en-US", {maximumFractionDigits: 0});
 
     var action = '';
     if (c.risk_tier === 'CRITICAL')
@@ -1635,7 +1636,7 @@ function renderRiskTable() {
     html += '<tr onclick="showDetailPanel(' + JSON.stringify(c).replace(/"/g, '&quot;') + ')" style="cursor:pointer;"><td>' + c.customer_id + '</td>';
     html += '<td>' + (c.churn_probability * 100).toFixed(1) + '%</td>';
     html += '<td>' + revenue + '</td>';
-    html += '<td>' + revenue + '</td>';
+    html += '<td>' + exposure + '</td>';
     html += '<td><span class="badge ' + tierClass + '">' + c.risk_tier + '</span></td>';
     html += '<td>' + action + '</td></tr>';
   });
@@ -1691,7 +1692,7 @@ function calculateROI() {
     return;
   }
 
-  fetch('/insights/roi?customers=' + customers + '&cost=' + cost + '&rate=' + rate)
+    fetch('/insights/roi?customers=' + customers + '&cost=' + cost + '&rate=' + rate)
     .then(r => {
       if (!r.ok) throw new Error('Calculation failed');
       return r.json();
@@ -1761,8 +1762,8 @@ function analyzeLookup() {
     .then(data => {
       var tierClass = 'badge-safe';
       if (data.risk_tier === 'CRITICAL') tierClass = 'badge-critical';
-      else if (data.risk_tier === 'HIGH') tierClass = 'badge-at-risk';
-      else if (data.risk_tier === 'MEDIUM') tierClass = 'badge-watch';
+      else if (data.risk_tier === 'AT-RISK') tierClass = 'badge-at-risk';
+      else if (data.risk_tier === 'WATCH') tierClass = 'badge-watch';
 
       document.getElementById('lookup-prob').textContent = (data.churn_probability * 100).toFixed(1);
       document.getElementById('lookup-tier').className = 'badge ' + tierClass;
@@ -1773,9 +1774,9 @@ function analyzeLookup() {
       var offer = data.recommended_action;
       if (data.risk_tier === 'CRITICAL') {
         offer = "Call and offer to lock in their current rate for 12 months with a free service add-on.";
-      } else if (data.risk_tier === 'HIGH') {
+      } else if (data.risk_tier === 'AT-RISK') {
         offer = "Send a personalized email with a 10% loyalty discount, then follow up by phone if no response within 3 days.";
-      } else if (data.risk_tier === 'MEDIUM') {
+      } else if (data.risk_tier === 'WATCH') {
         offer = "Monitor next month. If charges increase or a support ticket opens, move to active outreach.";
       } else {
         offer = "No action needed right now.";
@@ -1799,16 +1800,15 @@ window.addEventListener('DOMContentLoaded', () => {
       .then(r => r.json())
       .then(data => {
         if (data.customers && data.customers.length > 0) {
-          var html = '<table class="data-table"><thead><tr><th>Rank</th><th>Customer ID</th><th>Churn Risk</th><th>Revenue (24mo)</th><th>Exposure</th><th>Tier</th><th>Recommended Action</th></tr></thead><tbody>';
+          var html = '<table class="data-table"><thead><tr><th>Rank</th><th>Customer ID</th><th>Churn Risk</th><th>Expected Exposure</th><th>Tier</th><th>Recommended Action</th></tr></thead><tbody>';
           data.customers.forEach((c, i) => {
             var tierClass = 'badge-critical';
             var revenue = "$" + Number(c.revenue_at_risk).toLocaleString("en-US", {maximumFractionDigits: 0});
             html += '<tr><td>' + (i+1) + '</td><td>' + c.customer_id + '</td>';
             html += '<td>' + (c.churn_probability * 100).toFixed(1) + '%</td>';
             html += '<td>' + revenue + '</td>';
-            html += '<td>' + revenue + '</td>';
-            html += '<td><span class="badge ' + tierClass + '">CRITICAL</span></td>';
-            html += '<td>Offer 20% discount + 12-month contract lock</td></tr>';
+            html += '<td><span class="badge ' + tierClass + '">' + c.risk_tier + '</span></td>';
+            html += '<td>' + c.action + '</td></tr>';
           });
           html += '</tbody></table>';
           container.innerHTML = html;

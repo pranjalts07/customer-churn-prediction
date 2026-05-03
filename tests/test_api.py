@@ -55,4 +55,4 @@ def test_predict():
     assert "churn_probability" in data
     assert "risk_tier" in data
     assert 0 <= data["churn_probability"] <= 1
-    assert data["risk_tier"] in ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+    assert data["risk_tier"] in ["CRITICAL", "AT-RISK", "WATCH", "SAFE"]
