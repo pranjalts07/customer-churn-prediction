@@ -1066,7 +1066,7 @@
               <div id="bar-critical" style="width:0%;background:#ef4444;height:100%;
                           border-radius:4px;transition:width 1s ease 0.2s;"></div>
             </div>
-            <span style="font-size:12px;font-weight:700;color:#fff;width:28px;text-align:right;">0.9%</span>
+            <span style="font-size:12px;font-weight:700;color:#fff;width:36px;text-align:right;">{{ risk_critical_pct }}</span>
           </div>
 
           <!-- At-Risk -->
@@ -1076,7 +1076,7 @@
               <div id="bar-atrisk" style="width:0%;background:#f59e0b;height:100%;
                           border-radius:4px;transition:width 1s ease 0.35s;"></div>
             </div>
-            <span style="font-size:12px;font-weight:700;color:#fff;width:28px;text-align:right;">2.2%</span>
+            <span style="font-size:12px;font-weight:700;color:#fff;width:36px;text-align:right;">{{ risk_high_pct }}</span>
           </div>
 
           <!-- Watch -->
@@ -1086,7 +1086,7 @@
               <div id="bar-watch" style="width:0%;background:#8b5cf6;height:100%;
                           border-radius:4px;transition:width 1s ease 0.5s;"></div>
             </div>
-            <span style="font-size:12px;font-weight:700;color:#fff;width:28px;text-align:right;">27.1%</span>
+            <span style="font-size:12px;font-weight:700;color:#fff;width:36px;text-align:right;">{{ risk_medium_pct }}</span>
           </div>
 
           <!-- Safe -->
@@ -1096,7 +1096,7 @@
               <div id="bar-safe" style="width:0%;background:#22c55e;height:100%;
                           border-radius:4px;transition:width 1s ease 0.65s;"></div>
             </div>
-            <span style="font-size:12px;font-weight:700;color:#fff;width:36px;text-align:right;">69.8%</span>
+            <span style="font-size:12px;font-weight:700;color:#fff;width:36px;text-align:right;">{{ risk_low_pct }}</span>
           </div>
 
         </div>
@@ -1139,13 +1139,13 @@
 <script>
 setTimeout(function() {
   var b = document.getElementById('bar-critical');
-  if (b) b.style.width = '0.85%';
+  if (b) b.style.width = '{{ risk_critical_pct }}';
   b = document.getElementById('bar-atrisk');
-  if (b) b.style.width = '2.2%';
+  if (b) b.style.width = '{{ risk_high_pct }}';
   b = document.getElementById('bar-watch');
-  if (b) b.style.width = '27%';
+  if (b) b.style.width = '{{ risk_medium_pct }}';
   b = document.getElementById('bar-safe');
-  if (b) b.style.width = '69.8%';
+  if (b) b.style.width = '{{ risk_low_pct }}';
 }, 300);
 </script>
 
@@ -1208,7 +1208,7 @@ setTimeout(function() {
             <div class="kpi-sub">customers scored</div>
           </div>
           <div class="kpi-card red">
-            <div class="kpi-label">High Risk</div>
+            <div class="kpi-label">Above Threshold</div>
             <div class="kpi-value">{{ at_risk_pct }}</div>
             <div class="kpi-sub">of customer base at risk</div>
           </div>

@@ -180,6 +180,13 @@ def get_dashboard_metrics():
         else {}
     )
     revenue_exposure_pct = revenue_exposure / total_revenue * 100 if total_revenue else 0
+    risk_critical = int(tier_counts.get("CRITICAL", 15))
+    risk_high = int(tier_counts.get("AT-RISK", 190))
+    risk_medium = int(tier_counts.get("WATCH", 126))
+    risk_low = int(tier_counts.get("SAFE", max(total_customers - at_risk_count, 0)))
+
+    def pct(count):
+        return f"{(count / total_customers * 100):.1f}%" if total_customers else "0.0%"
 
     return {
         "total_customers": f"{total_customers:,}",
@@ -188,10 +195,14 @@ def get_dashboard_metrics():
         "revenue_exposure": f"${revenue_exposure:,.0f}",
         "revenue_exposure_pct": f"{revenue_exposure_pct:.1f}%",
         "potential_saves": f"${potential_saves:,.0f}",
-        "risk_critical": int(tier_counts.get("CRITICAL", 15)),
-        "risk_high": int(tier_counts.get("AT-RISK", 190)),
-        "risk_medium": int(tier_counts.get("WATCH", 126)),
-        "risk_low": int(tier_counts.get("SAFE", max(total_customers - at_risk_count, 0))),
+        "risk_critical": risk_critical,
+        "risk_high": risk_high,
+        "risk_medium": risk_medium,
+        "risk_low": risk_low,
+        "risk_critical_pct": pct(risk_critical),
+        "risk_high_pct": pct(risk_high),
+        "risk_medium_pct": pct(risk_medium),
+        "risk_low_pct": pct(risk_low),
         "risk_critical_revenue": f"${float(tier_revenue.get('CRITICAL', 0)):,.0f}",
         "risk_high_revenue": f"${float(tier_revenue.get('AT-RISK', 0)):,.0f}",
         "risk_medium_revenue": f"${float(tier_revenue.get('WATCH', 0)):,.0f}",
@@ -425,6 +436,10 @@ async def serve_dashboard():
         html_content = html_content.replace("{{ risk_high }}", str(metrics["risk_high"]))
         html_content = html_content.replace("{{ risk_medium }}", str(metrics["risk_medium"]))
         html_content = html_content.replace("{{ risk_low }}", str(metrics["risk_low"]))
+        html_content = html_content.replace("{{ risk_critical_pct }}", str(metrics["risk_critical_pct"]))
+        html_content = html_content.replace("{{ risk_high_pct }}", str(metrics["risk_high_pct"]))
+        html_content = html_content.replace("{{ risk_medium_pct }}", str(metrics["risk_medium_pct"]))
+        html_content = html_content.replace("{{ risk_low_pct }}", str(metrics["risk_low_pct"]))
         html_content = html_content.replace("{{ risk_critical_revenue }}", str(metrics["risk_critical_revenue"]))
         html_content = html_content.replace("{{ risk_high_revenue }}", str(metrics["risk_high_revenue"]))
         html_content = html_content.replace("{{ risk_medium_revenue }}", str(metrics["risk_medium_revenue"]))
