@@ -912,12 +912,11 @@
         line-height: 1.8;
         margin: 0;
         max-width: 480px;
-      ">I worked with machine learning models to predict which
-      telecom customers were most likely to leave. Random Forest
-      became the final model because it showed better-calibrated
-      probabilities than Logistic Regression, which matters more
-      than raw ranking accuracy when using a cost-weighted
-      threshold to maximize retention ROI.
+      ">I compared multiple machine learning models to predict which
+      telecom customers were most likely to leave. Logistic Regression
+      became the final selected model because it delivered the best
+      held-out business value, AUC-ROC, and AUC-PR when using a
+      cost-weighted threshold to maximize retention ROI.
       I built a dashboard that turns churn scores into a
       prioritized retention list showing who is most at risk,
       how much revenue is exposed, which customers should be
@@ -1263,22 +1262,22 @@ setTimeout(function() {
           <div class="risk-stat critical">
             <div class="risk-stat-tier">Critical</div>
             <div class="risk-stat-count">{{ risk_critical }}</div>
-            <div class="risk-stat-revenue">$27,448</div>
+            <div class="risk-stat-revenue">{{ risk_critical_revenue }}</div>
           </div>
           <div class="risk-stat at-risk">
             <div class="risk-stat-tier">At-Risk</div>
             <div class="risk-stat-count">{{ risk_high }}</div>
-            <div class="risk-stat-revenue">$53,749</div>
+            <div class="risk-stat-revenue">{{ risk_high_revenue }}</div>
           </div>
           <div class="risk-stat watch">
             <div class="risk-stat-tier">Watch</div>
             <div class="risk-stat-count">{{ risk_medium }}</div>
-            <div class="risk-stat-revenue">$394,197</div>
+            <div class="risk-stat-revenue">{{ risk_medium_revenue }}</div>
           </div>
           <div class="risk-stat safe">
             <div class="risk-stat-tier">Safe</div>
             <div class="risk-stat-count">{{ risk_low }}</div>
-            <div class="risk-stat-revenue">$223,716</div>
+            <div class="risk-stat-revenue">{{ risk_low_revenue }}</div>
           </div>
         </div>
 
@@ -1314,7 +1313,7 @@ setTimeout(function() {
             <div class="input-group">
               <label>Customers to contact</label>
               <input id="roi-customers" type="number" value="0" min="0" max="1000">
-              <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">Currently 54 are above the risk threshold</div>
+              <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">Currently {{ at_risk_count }} are above the optimized risk threshold</div>
             </div>
             <div class="input-group">
               <label>Cost per contact</label>

@@ -44,9 +44,11 @@ MODEL_STATE = {
     "churn_model": None,
     "scaler": None,
     "feature_names": [],
+    "model_name": "logistic_regression_churn_classifier",
     "threshold": 0.23,
     "test_df": None,
     "priority_df": None,
+    "metadata": {},
 }
 
 # Create FastAPI app
@@ -81,8 +83,10 @@ def load_churn_model():
         artifact = joblib.load(model_path)
         MODEL_STATE["churn_model"] = artifact["model"]
         MODEL_STATE["scaler"] = artifact.get("scaler")
-        MODEL_STATE["threshold"] = artifact.get("threshold", 0.23)
+        MODEL_STATE["threshold"] = artifact.get("threshold", 0.28)
         MODEL_STATE["feature_names"] = artifact.get("feature_names", [])
+        MODEL_STATE["model_name"] = artifact.get("model_name", "logistic_regression_churn_classifier")
+        MODEL_STATE["metadata"] = artifact.get("metadata", {})
         logger.info(f"✓ Model loaded: {len(MODEL_STATE['feature_names'])} features, scaler={MODEL_STATE['scaler'] is not None}")
     except Exception as e:
         logger.error(f"Model load error: {type(e).__name__}: {e}", exc_info=True)
@@ -118,19 +122,50 @@ def load_priority_data():
 
 def get_dashboard_metrics():
     """Calculate dashboard KPI values from priority contact list."""
+    load_churn_model()
+    load_priority_data()
+    load_test_data()
+
+    priority_df = MODEL_STATE["priority_df"]
+    test_df = MODEL_STATE["test_df"]
+    metrics = MODEL_STATE["metadata"].get("test_metrics", {})
+
+    total_customers = len(test_df) if test_df is not None else 1761
+    at_risk_count = len(priority_df) if priority_df is not None else int(metrics.get("flagged", 331))
+    revenue_exposure = (
+        float(priority_df["revenue_at_risk"].sum())
+        if priority_df is not None and "revenue_at_risk" in priority_df.columns
+        else float(metrics.get("revenue_at_risk_usd", 365321))
+    )
+    potential_saves = revenue_exposure * 0.30
+
+    if test_df is not None and "MonthlyCharges_raw" in test_df.columns:
+        total_revenue = float((test_df["MonthlyCharges_raw"] * 24).sum())
+    elif test_df is not None and "MonthlyCharges" in test_df.columns:
+        total_revenue = float((test_df["MonthlyCharges"] * 24).sum())
+    else:
+        total_revenue = 3172652.40
+
+    tier_counts = priority_df["risk_tier"].value_counts().to_dict() if priority_df is not None else {}
+    revenue_exposure_pct = revenue_exposure / total_revenue * 100 if total_revenue else 0
+
     return {
-        "total_customers": "1,761",
-        "at_risk_count": 54,
-        "at_risk_pct": "3.1%",
-        "revenue_exposure": "$81,197",
-        "revenue_exposure_pct": "11.6%",
-        "potential_saves": "$24,359",
-        "risk_critical": 15,
-        "risk_high": 39,
-        "risk_medium": 477,
-        "risk_low": 1230,
-        "auc_roc": "0.7900",
-        "auc_pr": "0.2288",
+        "total_customers": f"{total_customers:,}",
+        "at_risk_count": at_risk_count,
+        "at_risk_pct": f"{(at_risk_count / total_customers * 100):.1f}%" if total_customers else "0.0%",
+        "revenue_exposure": f"${revenue_exposure:,.0f}",
+        "revenue_exposure_pct": f"{revenue_exposure_pct:.1f}%",
+        "potential_saves": f"${potential_saves:,.0f}",
+        "risk_critical": int(tier_counts.get("CRITICAL", 15)),
+        "risk_high": int(tier_counts.get("AT-RISK", 190)),
+        "risk_medium": int(tier_counts.get("WATCH", 126)),
+        "risk_low": max(total_customers - at_risk_count, 0),
+        "risk_critical_revenue": f"${float(priority_df.loc[priority_df['risk_tier'] == 'CRITICAL', 'revenue_at_risk'].sum() if priority_df is not None else 0):,.0f}",
+        "risk_high_revenue": f"${float(priority_df.loc[priority_df['risk_tier'] == 'AT-RISK', 'revenue_at_risk'].sum() if priority_df is not None else 0):,.0f}",
+        "risk_medium_revenue": f"${float(priority_df.loc[priority_df['risk_tier'] == 'WATCH', 'revenue_at_risk'].sum() if priority_df is not None else 0):,.0f}",
+        "risk_low_revenue": "$0",
+        "auc_roc": f"{float(metrics.get('auc_roc', 0.8024)):.4f}",
+        "auc_pr": f"{float(metrics.get('auc_pr', 0.2545)):.4f}",
     }
 
 
@@ -144,7 +179,7 @@ async def health_check():
     return {
         "status": "ok",
         "service": "customer-churn-prediction",
-        "model": "random_forest_v1",
+        "model": MODEL_STATE["model_name"],
         "threshold": MODEL_STATE["threshold"],
         "features": feature_count,
         "feature_schema_version": "1.0",
@@ -176,31 +211,53 @@ async def get_global_insights():
 @app.get("/insights/all-customers")
 async def get_all_customers(tier: Optional[str] = None, limit: int = 100):
     """Return customer list with churn predictions, optionally filtered by risk tier."""
-    load_priority_data()
+    load_churn_model()
+    load_test_data()
 
-    if MODEL_STATE["priority_df"] is None:
-        raise HTTPException(status_code=503, detail="Priority data not available")
+    if MODEL_STATE["test_df"] is None or MODEL_STATE["churn_model"] is None:
+        raise HTTPException(status_code=503, detail="Model or test data not available")
 
-    df = MODEL_STATE["priority_df"]
+    import pandas as pd
 
-    if tier:
-        if tier.upper() == "CRITICAL":
-            df = df[df["risk_tier"] == "CRITICAL"]
-        elif tier.upper() in ["AT-RISK", "HIGH"]:
-            df = df[df["risk_tier"] == "AT-RISK"]
+    df = MODEL_STATE["test_df"].copy()
+    feature_names = MODEL_STATE["feature_names"]
+    probabilities = MODEL_STATE["churn_model"].predict_proba(df[feature_names])[:, 1]
+    monthly = df["MonthlyCharges_raw"] if "MonthlyCharges_raw" in df.columns else df["MonthlyCharges"]
+    revenue = probabilities * monthly.to_numpy() * 24
+    threshold = MODEL_STATE["threshold"]
 
-    # Limit results
-    df = df.head(limit)
+    scored = pd.DataFrame({
+        "customer_id": range(1, len(df) + 1),
+        "churn_probability": probabilities,
+        "revenue_at_risk": revenue,
+    })
+    scored["risk_tier"] = "SAFE"
+    scored.loc[scored["churn_probability"] >= threshold, "risk_tier"] = "WATCH"
+    scored.loc[scored["churn_probability"] >= 0.40, "risk_tier"] = "AT-RISK"
+    scored.loc[scored["churn_probability"] >= 0.70, "risk_tier"] = "CRITICAL"
 
-    # Convert to list of dicts
+    if tier and tier.lower() != "all":
+        scored = scored[scored["risk_tier"] == tier.upper()]
+
+    scored = scored.sort_values(["churn_probability", "revenue_at_risk"], ascending=False).head(limit)
+
     customers = []
-    for _, row in df.iterrows():
+    for _, row in scored.iterrows():
+        if row["risk_tier"] == "CRITICAL":
+            action = "Immediate retention call with contract or loyalty offer"
+        elif row["risk_tier"] == "AT-RISK":
+            action = "Priority outreach with targeted discount or service bundle"
+        elif row["risk_tier"] == "WATCH":
+            action = "Monitor closely and send proactive retention email"
+        else:
+            action = "No action needed"
+
         customers.append({
-            "customer_id": str(int(row.get("customer_id", row.get("Unnamed: 0", 0)))),
+            "customer_id": str(int(row["customer_id"])),
             "churn_probability": round(float(row["churn_probability"]), 4),
             "revenue_at_risk": round(float(row["revenue_at_risk"]), 2),
             "risk_tier": str(row["risk_tier"]),
-            "action": str(row.get("recommended_action", "Contact"))[:80],
+            "action": action,
         })
 
     return {"customers": customers, "total": len(customers)}
@@ -356,6 +413,10 @@ async def serve_dashboard():
         html_content = html_content.replace("{{ risk_high }}", str(metrics["risk_high"]))
         html_content = html_content.replace("{{ risk_medium }}", str(metrics["risk_medium"]))
         html_content = html_content.replace("{{ risk_low }}", str(metrics["risk_low"]))
+        html_content = html_content.replace("{{ risk_critical_revenue }}", str(metrics["risk_critical_revenue"]))
+        html_content = html_content.replace("{{ risk_high_revenue }}", str(metrics["risk_high_revenue"]))
+        html_content = html_content.replace("{{ risk_medium_revenue }}", str(metrics["risk_medium_revenue"]))
+        html_content = html_content.replace("{{ risk_low_revenue }}", str(metrics["risk_low_revenue"]))
         html_content = html_content.replace("{{ auc_roc }}", str(metrics["auc_roc"]))
         html_content = html_content.replace("{{ auc_pr }}", str(metrics["auc_pr"]))
 

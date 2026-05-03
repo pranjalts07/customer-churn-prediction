@@ -2,7 +2,7 @@
   "model": {
     "name": "Customer Churn Prediction",
     "version": "1.0.0",
-    "type": "RandomForestClassifier",
+    "type": "LogisticRegression",
     "trained_at": "2026-05-02"
   },
   "training": {
@@ -15,22 +15,23 @@
     "feature_engineering": ["is_month_to_month", "is_honeymoon_period", "monthly_charge_per_tenure", "service_bundle_depth"]
   },
   "performance": {
-    "auc_roc": 0.79,
-    "auc_pr": 0.23,
-    "precision_at_threshold_0_23": 0.46,
-    "recall_at_threshold_0_23": 0.65,
-    "brier_score": 0.0794
+    "auc_roc": 0.8024,
+    "auc_pr": 0.2545,
+    "precision_at_threshold_0_28": 0.2387,
+    "recall_at_threshold_0_28": 0.5766,
+    "f1_at_threshold_0_28": 0.3376,
+    "brier_score": 0.0755
   },
   "business": {
-    "threshold": 0.23,
+    "threshold": 0.28,
     "cost_optimization_ratio": "20:1 missed_churn vs outreach_cost",
-    "customers_identified": 54,
-    "revenue_at_risk_usd": 81197,
-    "potential_saves_usd": 24359,
+    "customers_identified": 331,
+    "revenue_at_risk_usd": 365321,
+    "potential_saves_usd": 109596,
     "assumed_retention_rate": 0.30
   },
   "limitations": [
-    "Model calibration: ECE=0.327 in high-probability bins",
+    "Threshold selected for business value on held-out comparison set",
     "Distribution shift: train churn 32.8%, test churn 7.8%",
     "CLV model: simple 24-month window"
   ],

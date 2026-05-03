@@ -54,12 +54,13 @@ The system combines a trained machine learning model, a FastAPI backend, an inte
 | Metric | Value |
 | --- | --- |
 | Customers analyzed | 7,043 |
-| High risk customers identified | 54 |
-| Revenue at risk | $81,197 |
-| Potential saves | $24,359 |
-| AUC ROC | 0.79 |
-| AUC PR | 0.23 |
-| Cost optimized threshold | 0.23 |
+| Test portfolio scored | 1,761 |
+| Customers above risk threshold | 331 |
+| Revenue at risk | $365,321 |
+| Potential saves | $109,596 |
+| AUC ROC | 0.8024 |
+| AUC PR | 0.2545 |
+| Cost optimized threshold | 0.28 |
 
 ## Machine Learning Models Tested
 
@@ -86,19 +87,19 @@ true positives * 150 - flagged customers * 25
 
 This reflects the project assumption that a correctly retained churner saves about `$150`, while every customer contacted costs `$25`.
 
-### Current Production Artifact
+### Production Model
 
-The current saved model artifact used by the API is still a Random Forest model. Its model card reports:
+The saved model artifact used by the API is the Logistic Regression model selected by comparison. Its model card reports:
 
 | Metric | Result |
 | --- | --- |
-| AUC ROC | 0.79 |
-| AUC PR | 0.23 |
-| Precision at threshold 0.23 | 46 percent |
-| Recall at threshold 0.23 | 65 percent |
-| Brier score | 0.0794 |
+| AUC ROC | 0.8024 |
+| AUC PR | 0.2545 |
+| Precision at threshold 0.28 | 23.87 percent |
+| Recall at threshold 0.28 | 57.66 percent |
+| Brier score | 0.0755 |
 
-The comparison shows that Logistic Regression is the best candidate on the current held out test set. The production artifact remains unchanged in this update so the working application behavior stays stable.
+The comparison shows that Logistic Regression is the best candidate on the current held out test set, so the production artifact, dashboard metrics, and model card now use Logistic Regression.
 
 ## Main Features
 

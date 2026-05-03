@@ -1,55 +1,332 @@
 customer_id,risk_tier,churn_probability,revenue_at_risk,monthly_charges,recommended_action
-1,CRITICAL,0.8,1506,65.0,Contact immediately
-2,CRITICAL,0.8,1506,65.0,Contact immediately
-3,CRITICAL,0.8,1506,65.0,Contact immediately
-4,CRITICAL,0.8,1506,65.0,Contact immediately
-5,CRITICAL,0.8,1506,65.0,Contact immediately
-6,CRITICAL,0.8,1506,65.0,Contact immediately
-7,CRITICAL,0.8,1506,65.0,Contact immediately
-8,CRITICAL,0.8,1506,65.0,Contact immediately
-9,CRITICAL,0.8,1506,65.0,Contact immediately
-10,CRITICAL,0.8,1506,65.0,Contact immediately
-11,CRITICAL,0.8,1506,65.0,Contact immediately
-12,CRITICAL,0.8,1506,65.0,Contact immediately
-13,CRITICAL,0.8,1506,65.0,Contact immediately
-14,CRITICAL,0.8,1506,65.0,Contact immediately
-15,CRITICAL,0.8,1506,65.0,Contact immediately
-16,AT-RISK,0.5,1588,65.0,Contact immediately
-17,AT-RISK,0.5,1588,65.0,Contact immediately
-18,AT-RISK,0.5,1588,65.0,Contact immediately
-19,AT-RISK,0.5,1588,65.0,Contact immediately
-20,AT-RISK,0.5,1588,65.0,Contact immediately
-21,AT-RISK,0.5,1588,65.0,Contact immediately
-22,AT-RISK,0.5,1588,65.0,Contact immediately
-23,AT-RISK,0.5,1588,65.0,Contact immediately
-24,AT-RISK,0.5,1588,65.0,Contact immediately
-25,AT-RISK,0.5,1588,65.0,Contact immediately
-26,AT-RISK,0.5,1588,65.0,Contact immediately
-27,AT-RISK,0.5,1588,65.0,Contact immediately
-28,AT-RISK,0.5,1588,65.0,Contact immediately
-29,AT-RISK,0.5,1588,65.0,Contact immediately
-30,AT-RISK,0.5,1588,65.0,Contact immediately
-31,AT-RISK,0.5,1588,65.0,Contact immediately
-32,AT-RISK,0.5,1588,65.0,Contact immediately
-33,AT-RISK,0.5,1588,65.0,Contact immediately
-34,AT-RISK,0.5,1588,65.0,Contact immediately
-35,AT-RISK,0.5,1588,65.0,Contact immediately
-36,AT-RISK,0.5,1588,65.0,Contact immediately
-37,AT-RISK,0.5,1588,65.0,Contact immediately
-38,AT-RISK,0.5,1588,65.0,Contact immediately
-39,AT-RISK,0.5,1588,65.0,Contact immediately
-40,AT-RISK,0.5,1588,65.0,Contact immediately
-41,AT-RISK,0.5,1588,65.0,Contact immediately
-42,AT-RISK,0.5,1588,65.0,Contact immediately
-43,AT-RISK,0.5,1588,65.0,Contact immediately
-44,AT-RISK,0.5,1588,65.0,Contact immediately
-45,AT-RISK,0.5,1588,65.0,Contact immediately
-46,AT-RISK,0.5,1588,65.0,Contact immediately
-47,AT-RISK,0.5,1588,65.0,Contact immediately
-48,AT-RISK,0.5,1588,65.0,Contact immediately
-49,AT-RISK,0.5,1588,65.0,Contact immediately
-50,AT-RISK,0.5,1588,65.0,Contact immediately
-51,AT-RISK,0.5,1588,65.0,Contact immediately
-52,AT-RISK,0.5,1588,65.0,Contact immediately
-53,AT-RISK,0.5,1588,65.0,Contact immediately
-54,AT-RISK,0.5,1588,65.0,Contact immediately
+193,CRITICAL,0.7637226669237235,1809.1062534089165,98.7,Immediate retention call with contract or loyalty offer
+296,CRITICAL,0.7497493258033588,1905.5628864618168,105.9,Immediate retention call with contract or loyalty offer
+29,CRITICAL,0.7465663178095526,1803.4055973007555,100.65,Immediate retention call with contract or loyalty offer
+539,CRITICAL,0.7444464066907285,1849.2048742197694,103.5,Immediate retention call with contract or loyalty offer
+761,CRITICAL,0.7438431673904359,1799.5053905509426,100.8,Immediate retention call with contract or loyalty offer
+83,CRITICAL,0.7428969623524201,1801.6737130970891,101.05,Immediate retention call with contract or loyalty offer
+968,CRITICAL,0.7416178571409328,1783.4426228525151,100.2,Immediate retention call with contract or loyalty offer
+199,CRITICAL,0.7378504134283987,1751.3617413136474,98.9,Immediate retention call with contract or loyalty offer
+224,CRITICAL,0.7244115824884624,1631.6646483970126,93.85,Immediate retention call with contract or loyalty offer
+942,CRITICAL,0.7218804403667218,1824.3362488947794,105.3,Immediate retention call with contract or loyalty offer
+283,CRITICAL,0.7150005105667808,1698.8412131066714,99.0,Immediate retention call with contract or loyalty offer
+437,CRITICAL,0.7130809525310243,1734.4981089364633,101.35,Immediate retention call with contract or loyalty offer
+340,CRITICAL,0.7062642151618423,1691.6440481556447,99.8,Immediate retention call with contract or loyalty offer
+1195,CRITICAL,0.7031708086871509,1737.3944341042125,102.95,Immediate retention call with contract or loyalty offer
+354,CRITICAL,0.7011979639394978,1786.3719329322648,106.15,Immediate retention call with contract or loyalty offer
+722,AT-RISK,0.6998433534446863,1752.6876943668724,104.35,Priority outreach with targeted discount or service bundle
+430,AT-RISK,0.6954247607921512,1775.0021594458867,106.35,Priority outreach with targeted discount or service bundle
+332,AT-RISK,0.6943484504673493,1764.7560217078149,105.9,Priority outreach with targeted discount or service bundle
+727,AT-RISK,0.6930952039238356,1809.8101964859197,108.8,Priority outreach with targeted discount or service bundle
+782,AT-RISK,0.6905590331062882,1743.5234467867563,105.2,Priority outreach with targeted discount or service bundle
+213,AT-RISK,0.687674194982971,1657.0197402309668,100.4,Priority outreach with targeted discount or service bundle
+529,AT-RISK,0.6796723796334634,1686.6749772984028,103.4,Priority outreach with targeted discount or service bundle
+101,AT-RISK,0.6744516679980859,1628.3961072145785,100.6,Priority outreach with targeted discount or service bundle
+555,AT-RISK,0.6737795356502326,1655.8805868140118,102.4,Priority outreach with targeted discount or service bundle
+1063,AT-RISK,0.6732055951564819,1679.513318796391,103.95,Priority outreach with targeted discount or service bundle
+907,AT-RISK,0.6657707300148893,1620.2196485642348,101.4,Priority outreach with targeted discount or service bundle
+49,AT-RISK,0.6638476498270252,1668.9129916651411,104.75,Priority outreach with targeted discount or service bundle
+400,AT-RISK,0.6631668242989751,1578.0717751018412,99.15,Priority outreach with targeted discount or service bundle
+719,AT-RISK,0.6629969065791642,1678.7081674584438,105.5,Priority outreach with targeted discount or service bundle
+133,AT-RISK,0.6595760317425305,1592.4803710391657,100.6,Priority outreach with targeted discount or service bundle
+790,AT-RISK,0.6578319272641238,1570.9026423067276,99.5,Priority outreach with targeted discount or service bundle
+417,AT-RISK,0.6550812656069521,1659.4518620355311,105.55,Priority outreach with targeted discount or service bundle
+664,AT-RISK,0.6525588923674879,1645.2314794369104,105.05,Priority outreach with targeted discount or service bundle
+894,AT-RISK,0.6521462378339702,1481.4153938636468,94.65,Priority outreach with targeted discount or service bundle
+617,AT-RISK,0.6493927599138082,1698.0321886226257,108.95,Priority outreach with targeted discount or service bundle
+125,AT-RISK,0.6492779684254716,1552.813189286358,99.65,Priority outreach with targeted discount or service bundle
+1287,AT-RISK,0.6489965063982124,1552.1400447019648,99.65,Priority outreach with targeted discount or service bundle
+773,AT-RISK,0.6483396768428985,1556.7932320351679,100.05,Priority outreach with targeted discount or service bundle
+535,AT-RISK,0.647417660763201,1689.7600945919546,108.75,Priority outreach with targeted discount or service bundle
+1249,AT-RISK,0.6442791421517138,1662.2401867514213,107.5,Priority outreach with targeted discount or service bundle
+132,AT-RISK,0.6349020932496304,1369.102873883503,89.85,Priority outreach with targeted discount or service bundle
+122,AT-RISK,0.634086169019507,1590.2881119009235,104.5,Priority outreach with targeted discount or service bundle
+639,AT-RISK,0.6340253407557438,1434.1653207894924,94.25,Priority outreach with targeted discount or service bundle
+546,AT-RISK,0.628435205105012,1351.3870650578178,89.6,Priority outreach with targeted discount or service bundle
+252,AT-RISK,0.62329287422319,1512.3578300151482,101.1,Priority outreach with targeted discount or service bundle
+604,AT-RISK,0.6227868155894802,1661.3461092664977,111.15,Priority outreach with targeted discount or service bundle
+168,AT-RISK,0.6218097494132676,1422.2032588580257,95.3,Priority outreach with targeted discount or service bundle
+118,AT-RISK,0.6207596482947274,1562.8244905468057,104.9,Priority outreach with targeted discount or service bundle
+653,AT-RISK,0.6194637047745907,1549.898189346026,104.25,Priority outreach with targeted discount or service bundle
+7,AT-RISK,0.61930103822231,1467.000299341008,98.7,Priority outreach with targeted discount or service bundle
+358,AT-RISK,0.6180400236306769,1692.4408007102456,114.1,Priority outreach with targeted discount or service bundle
+181,AT-RISK,0.6147184292560002,1506.3060390489027,102.1,Priority outreach with targeted discount or service bundle
+57,AT-RISK,0.6108347910312674,1254.8989946946356,85.6,Priority outreach with targeted discount or service bundle
+772,AT-RISK,0.6086717593994758,1533.852833686679,105.0,Priority outreach with targeted discount or service bundle
+673,AT-RISK,0.6081362623803539,1596.7225705058572,109.4,Priority outreach with targeted discount or service bundle
+998,AT-RISK,0.606790951578797,1304.8432622750452,89.6,Priority outreach with targeted discount or service bundle
+956,AT-RISK,0.6045441564219304,1391.418830420715,95.9,Priority outreach with targeted discount or service bundle
+53,AT-RISK,0.602550032382756,1524.9336219542788,105.45,Priority outreach with targeted discount or service bundle
+269,AT-RISK,0.6023639018172192,1283.0351108706768,88.75,Priority outreach with targeted discount or service bundle
+1229,AT-RISK,0.6008558712521733,1310.1061416782386,90.85,Priority outreach with targeted discount or service bundle
+522,AT-RISK,0.6004289471733975,1576.4862436984724,109.4,Priority outreach with targeted discount or service bundle
+258,AT-RISK,0.5987179264222255,1600.0137865707552,111.35,Priority outreach with targeted discount or service bundle
+109,AT-RISK,0.5973163478078131,1365.4651710886608,95.25,Priority outreach with targeted discount or service bundle
+37,AT-RISK,0.597057027372639,1412.8757495746129,98.6,Priority outreach with targeted discount or service bundle
+440,AT-RISK,0.5963929268302153,1285.34603590448,89.8,Priority outreach with targeted discount or service bundle
+1086,AT-RISK,0.5930346467939245,1280.2431954987242,89.95,Priority outreach with targeted discount or service bundle
+387,AT-RISK,0.5892314138350813,1505.3684160658656,106.45,Priority outreach with targeted discount or service bundle
+660,AT-RISK,0.5875769620854651,1539.2166098790844,109.15,Priority outreach with targeted discount or service bundle
+273,AT-RISK,0.5855703468159844,1398.3419881965706,99.5,Priority outreach with targeted discount or service bundle
+1078,AT-RISK,0.5848911837045384,1396.0182772659923,99.45,Priority outreach with targeted discount or service bundle
+652,AT-RISK,0.5846955660946356,1452.3837861790748,103.5,Priority outreach with targeted discount or service bundle
+678,AT-RISK,0.5833875499435913,1336.424199410779,95.45,Priority outreach with targeted discount or service bundle
+724,AT-RISK,0.5833161551146455,1387.359143324673,99.1,Priority outreach with targeted discount or service bundle
+1667,AT-RISK,0.5825393272778158,1323.2963358442864,94.65,Priority outreach with targeted discount or service bundle
+359,AT-RISK,0.5789033634981406,1475.508892884061,106.2,Priority outreach with targeted discount or service bundle
+461,AT-RISK,0.5757814370271057,1383.9482620383515,100.15,Priority outreach with targeted discount or service bundle
+304,AT-RISK,0.5752223774389428,1234.8873998859224,89.45,Priority outreach with targeted discount or service bundle
+921,AT-RISK,0.5738321521254426,1483.2413468138438,107.7,Priority outreach with targeted discount or service bundle
+715,AT-RISK,0.5729924232528448,1246.6023160288892,90.65,Priority outreach with targeted discount or service bundle
+570,AT-RISK,0.5665202642658241,1493.5740247104186,109.85,Priority outreach with targeted discount or service bundle
+20,AT-RISK,0.5648258170112344,1312.881129060913,96.85,Priority outreach with targeted discount or service bundle
+327,AT-RISK,0.5611234174860292,1289.4616133828952,95.75,Priority outreach with targeted discount or service bundle
+326,AT-RISK,0.560758442319058,1473.0002762837016,109.45,Priority outreach with targeted discount or service bundle
+696,AT-RISK,0.5527473099706532,1396.23970498587,105.25,Priority outreach with targeted discount or service bundle
+167,AT-RISK,0.5520361177354777,1230.1572847617385,92.85,Priority outreach with targeted discount or service bundle
+669,AT-RISK,0.54846373061748,1398.582513074574,106.25,Priority outreach with targeted discount or service bundle
+451,AT-RISK,0.5463245647407003,1260.0429761179512,96.1,Priority outreach with targeted discount or service bundle
+1024,AT-RISK,0.545172810709611,1247.5734600278738,95.35,Priority outreach with targeted discount or service bundle
+1196,AT-RISK,0.542271164539909,1380.1885679869763,106.05,Priority outreach with targeted discount or service bundle
+1727,AT-RISK,0.5417964219380903,1468.0515848834496,112.9,Priority outreach with targeted discount or service bundle
+460,AT-RISK,0.5388488477886126,1364.3652826007672,105.5,Priority outreach with targeted discount or service bundle
+287,AT-RISK,0.5350063165041934,1197.3441363363847,93.25,Priority outreach with targeted discount or service bundle
+68,AT-RISK,0.5343740095033899,1367.1424659134727,106.6,Priority outreach with targeted discount or service bundle
+353,AT-RISK,0.5308124691048347,1329.366747626148,104.35,Priority outreach with targeted discount or service bundle
+1199,AT-RISK,0.5268771809372182,1234.7893612444648,97.65,Priority outreach with targeted discount or service bundle
+1331,AT-RISK,0.5233418331176223,1330.1256030517488,105.9,Priority outreach with targeted discount or service bundle
+337,AT-RISK,0.52279622692226,1329.9936012902294,106.0,Priority outreach with targeted discount or service bundle
+1289,AT-RISK,0.5189527808733349,1309.0064944748997,105.1,Priority outreach with targeted discount or service bundle
+274,AT-RISK,0.5172065059565328,1176.1275945451557,94.75,Priority outreach with targeted discount or service bundle
+300,AT-RISK,0.5170724441007355,1115.6355053917468,89.9,Priority outreach with targeted discount or service bundle
+38,AT-RISK,0.516557295558978,1218.04210292807,98.25,Priority outreach with targeted discount or service bundle
+104,AT-RISK,0.5163330799238516,1164.8474283082091,94.0,Priority outreach with targeted discount or service bundle
+455,AT-RISK,0.5160034746301281,1284.848651829019,103.75,Priority outreach with targeted discount or service bundle
+520,AT-RISK,0.5159227828818703,1305.0782715779792,105.4,Priority outreach with targeted discount or service bundle
+33,AT-RISK,0.5135881367713844,947.2619594611413,76.85,Priority outreach with targeted discount or service bundle
+694,AT-RISK,0.5135817536785239,1368.798089904002,111.05,Priority outreach with targeted discount or service bundle
+61,AT-RISK,0.5130631677823354,1163.0115887289978,94.45,Priority outreach with targeted discount or service bundle
+363,AT-RISK,0.5100663883352872,1005.6468912418522,82.15,Priority outreach with targeted discount or service bundle
+1324,AT-RISK,0.5095103593426998,1140.2841842089622,93.25,Priority outreach with targeted discount or service bundle
+352,AT-RISK,0.5086053770354408,1226.7561694094834,100.5,Priority outreach with targeted discount or service bundle
+828,AT-RISK,0.5073933781841717,1090.4898483934219,89.55,Priority outreach with targeted discount or service bundle
+488,AT-RISK,0.505918905081282,1174.7436975987368,96.75,Priority outreach with targeted discount or service bundle
+284,AT-RISK,0.5053485964551143,1258.3180051732347,103.75,Priority outreach with targeted discount or service bundle
+34,AT-RISK,0.5048929666621192,1276.5713769085023,105.35,Priority outreach with targeted discount or service bundle
+235,AT-RISK,0.5034266941368268,1005.8465348853802,83.25,Priority outreach with targeted discount or service bundle
+1111,AT-RISK,0.5005291708015633,1258.930970400092,104.8,Priority outreach with targeted discount or service bundle
+204,AT-RISK,0.5002960731472029,1174.2949428911147,97.8,Priority outreach with targeted discount or service bundle
+699,AT-RISK,0.498199017664509,1284.755626753236,107.45,Priority outreach with targeted discount or service bundle
+1204,AT-RISK,0.49735156614531256,1214.5325245268532,101.75,Priority outreach with targeted discount or service bundle
+59,AT-RISK,0.49561615112435414,1331.6214748409147,111.95,Priority outreach with targeted discount or service bundle
+656,AT-RISK,0.495392667553403,1092.0435963547216,91.85,Priority outreach with targeted discount or service bundle
+427,AT-RISK,0.4948020769543283,1234.4322215856582,103.95,Priority outreach with targeted discount or service bundle
+734,AT-RISK,0.4938278462025076,1243.260985599433,104.9,Priority outreach with targeted discount or service bundle
+553,AT-RISK,0.49132688822317894,1267.6233716158017,107.5,Priority outreach with targeted discount or service bundle
+490,AT-RISK,0.49019421657116297,1178.2308189504474,100.15,Priority outreach with targeted discount or service bundle
+85,AT-RISK,0.487284207728529,1281.7523800091226,109.6,Priority outreach with targeted discount or service bundle
+299,AT-RISK,0.4840277838559388,1219.1691819763387,104.95,Priority outreach with targeted discount or service bundle
+257,AT-RISK,0.4838761013659585,1042.2691223422746,89.75,Priority outreach with targeted discount or service bundle
+1439,AT-RISK,0.4826507678646481,1173.99972775397,101.35,Priority outreach with targeted discount or service bundle
+797,AT-RISK,0.4809487700843171,1148.5056629613491,99.5,Priority outreach with targeted discount or service bundle
+164,AT-RISK,0.47995404409167136,1054.5550256782203,91.55,Priority outreach with targeted discount or service bundle
+144,AT-RISK,0.47944723649659704,1159.3034178487717,100.75,Priority outreach with targeted discount or service bundle
+18,AT-RISK,0.47914726462881585,1228.1502686965807,106.8,Priority outreach with targeted discount or service bundle
+384,AT-RISK,0.4784443000113995,1198.7900381085626,104.4,Priority outreach with targeted discount or service bundle
+434,AT-RISK,0.47685319503988755,1199.953379998373,104.85,Priority outreach with targeted discount or service bundle
+690,AT-RISK,0.4754452374222904,1177.0122297626222,103.15,Priority outreach with targeted discount or service bundle
+124,AT-RISK,0.47530560326725785,1175.5258180005821,103.05,Priority outreach with targeted discount or service bundle
+713,AT-RISK,0.471400884967309,1139.8473398509532,100.75,Priority outreach with targeted discount or service bundle
+230,AT-RISK,0.467027102331773,1046.3275200641042,93.35,Priority outreach with targeted discount or service bundle
+81,AT-RISK,0.4669311239110386,1173.864845512351,104.75,Priority outreach with targeted discount or service bundle
+439,AT-RISK,0.46690574065535484,1053.3393509184805,94.0,Priority outreach with targeted discount or service bundle
+794,AT-RISK,0.4658442511805075,1239.332045840622,110.85,Priority outreach with targeted discount or service bundle
+405,AT-RISK,0.46363599340315587,1111.6136577834066,99.9,Priority outreach with targeted discount or service bundle
+987,AT-RISK,0.4600348730158694,887.1312491238026,80.35,Priority outreach with targeted discount or service bundle
+275,AT-RISK,0.459705580351655,1097.776925879752,99.5,Priority outreach with targeted discount or service bundle
+887,AT-RISK,0.45913511518328287,1163.632035920512,105.6,Priority outreach with targeted discount or service bundle
+94,AT-RISK,0.4568853859957093,814.7180203075488,74.3,Priority outreach with targeted discount or service bundle
+149,AT-RISK,0.45603503001608076,490.8761063093093,44.85,Priority outreach with targeted discount or service bundle
+1759,AT-RISK,0.45332966771016403,1150.5506966483963,105.75,Priority outreach with targeted discount or service bundle
+800,AT-RISK,0.45286521497915105,1117.8524966545365,102.85,Priority outreach with targeted discount or service bundle
+323,AT-RISK,0.4509005948020551,1097.3116875102812,101.4,Priority outreach with targeted discount or service bundle
+355,AT-RISK,0.4507289662070068,964.9205708559601,89.2,Priority outreach with targeted discount or service bundle
+237,AT-RISK,0.4491090380029955,1150.6173553636745,106.75,Priority outreach with targeted discount or service bundle
+212,AT-RISK,0.447343603426045,1002.7654214398226,93.4,Priority outreach with targeted discount or service bundle
+226,AT-RISK,0.44707243951461256,1037.0292306980955,96.65,Priority outreach with targeted discount or service bundle
+3,AT-RISK,0.44655882835327243,916.338715780915,85.5,Priority outreach with targeted discount or service bundle
+161,AT-RISK,0.4454502938236628,1118.7929579675115,104.65,Priority outreach with targeted discount or service bundle
+227,AT-RISK,0.4454383223851756,1134.7986701084735,106.15,Priority outreach with targeted discount or service bundle
+266,AT-RISK,0.44477959962573976,1061.5999483867158,99.45,Priority outreach with targeted discount or service bundle
+1015,AT-RISK,0.44318255725194344,900.3696833130483,84.65,Priority outreach with targeted discount or service bundle
+398,AT-RISK,0.442515745892629,1097.0850372170057,103.3,Priority outreach with targeted discount or service bundle
+1590,AT-RISK,0.4422659571044874,1159.621339527966,109.25,Priority outreach with targeted discount or service bundle
+816,AT-RISK,0.4415528860713138,852.5503124264928,80.45,Priority outreach with targeted discount or service bundle
+465,AT-RISK,0.44129119493406305,943.6570912470004,89.1,Priority outreach with targeted discount or service bundle
+40,AT-RISK,0.44055730394369813,948.4317639299934,89.7,Priority outreach with targeted discount or service bundle
+10,AT-RISK,0.44043912775627936,1035.9128284827689,98.0,Priority outreach with targeted discount or service bundle
+548,AT-RISK,0.4402198366907524,1062.3385099021234,100.55,Priority outreach with targeted discount or service bundle
+1455,AT-RISK,0.4397018854353461,1026.2642006060978,97.25,Priority outreach with targeted discount or service bundle
+292,AT-RISK,0.4374470357841276,987.9303856148737,94.1,Priority outreach with targeted discount or service bundle
+190,AT-RISK,0.43484143117076457,1135.9797547905052,108.85,Priority outreach with targeted discount or service bundle
+301,AT-RISK,0.43417389556371705,1020.655993691186,97.95,Priority outreach with targeted discount or service bundle
+779,AT-RISK,0.4329798920268231,1100.9812694458058,105.95,Priority outreach with targeted discount or service bundle
+509,AT-RISK,0.4327157410990941,1124.1954953754466,108.25,Priority outreach with targeted discount or service bundle
+1501,AT-RISK,0.4299257270468665,1082.8969212856473,104.95,Priority outreach with targeted discount or service bundle
+1116,AT-RISK,0.4294751205133111,1112.1687720812706,107.9,Priority outreach with targeted discount or service bundle
+117,AT-RISK,0.42921974717683087,566.5700662734167,55.0,Priority outreach with targeted discount or service bundle
+303,AT-RISK,0.42875583273187706,832.9868318314907,80.95,Priority outreach with targeted discount or service bundle
+562,AT-RISK,0.42687760947439635,835.4848572632885,81.55,Priority outreach with targeted discount or service bundle
+728,AT-RISK,0.4263436452750294,1063.1305138578132,103.9,Priority outreach with targeted discount or service bundle
+873,AT-RISK,0.4260465111917818,774.0413015332291,75.7,Priority outreach with targeted discount or service bundle
+360,AT-RISK,0.4241330043247485,982.2920380161174,96.5,Priority outreach with targeted discount or service bundle
+32,AT-RISK,0.42316912276684693,750.0249531919594,73.85,Priority outreach with targeted discount or service bundle
+787,AT-RISK,0.4225081016594515,1045.4540467461468,103.1,Priority outreach with targeted discount or service bundle
+1157,AT-RISK,0.4213149495588536,1076.8810110724298,106.5,Priority outreach with targeted discount or service bundle
+1154,AT-RISK,0.4211059100799412,1106.6663316900854,109.5,Priority outreach with targeted discount or service bundle
+182,AT-RISK,0.41891120994183184,948.0798503403538,94.3,Priority outreach with targeted discount or service bundle
+632,AT-RISK,0.41792647562493224,1003.5250532705873,100.05,Priority outreach with targeted discount or service bundle
+868,AT-RISK,0.4173245233151574,1114.2564772514702,111.25,Priority outreach with targeted discount or service bundle
+5,AT-RISK,0.4162948896772162,814.7723580762474,81.55,Priority outreach with targeted discount or service bundle
+202,AT-RISK,0.41532723846916014,1029.180896926579,103.25,Priority outreach with targeted discount or service bundle
+739,AT-RISK,0.414859674174078,1076.3119386772278,108.1,Priority outreach with targeted discount or service bundle
+208,AT-RISK,0.4143904595376565,1071.6137283643798,107.75,Priority outreach with targeted discount or service bundle
+489,AT-RISK,0.41376561541603246,1099.7890057758143,110.75,Priority outreach with targeted discount or service bundle
+1027,AT-RISK,0.41221955745362715,844.8852049569542,85.4,Priority outreach with targeted discount or service bundle
+1181,AT-RISK,0.40926412963580205,1036.7478931934138,105.55,Priority outreach with targeted discount or service bundle
+8,AT-RISK,0.4091991860926367,987.4794758787509,100.55,Priority outreach with targeted discount or service bundle
+64,AT-RISK,0.4082840400354142,977.9219326928239,99.8,Priority outreach with targeted discount or service bundle
+55,AT-RISK,0.40765049236408657,1049.2923673451587,107.25,Priority outreach with targeted discount or service bundle
+239,AT-RISK,0.40563699319632884,489.19821379477264,50.25,Priority outreach with targeted discount or service bundle
+805,AT-RISK,0.4049120173813277,1043.2153215812527,107.35,Priority outreach with targeted discount or service bundle
+830,AT-RISK,0.40366608580403696,1024.0201264676812,105.7,Priority outreach with targeted discount or service bundle
+540,AT-RISK,0.40352526449814236,929.72220940372,96.0,Priority outreach with targeted discount or service bundle
+609,AT-RISK,0.4034932706576733,988.7199104195627,102.1,Priority outreach with targeted discount or service bundle
+751,AT-RISK,0.4014657407926844,1044.9350301351988,108.45,Priority outreach with targeted discount or service bundle
+862,AT-RISK,0.40036586897751203,1028.619990577024,107.05,Priority outreach with targeted discount or service bundle
+733,WATCH,0.3999579014014666,998.7748713797423,104.05,Monitor closely and send proactive retention email
+100,WATCH,0.3988926901114112,912.3473608228196,95.3,Monitor closely and send proactive retention email
+843,WATCH,0.39555701843203417,1000.6010338256738,105.4,Monitor closely and send proactive retention email
+821,WATCH,0.3953338996320607,976.7909992108957,102.95,Monitor closely and send proactive retention email
+1589,WATCH,0.3939150233553912,1010.1556858925651,106.85,Monitor closely and send proactive retention email
+48,WATCH,0.39316983530206245,815.2769704823568,86.4,Monitor closely and send proactive retention email
+1260,WATCH,0.3929111609801865,930.2564647366896,98.65,Monitor closely and send proactive retention email
+748,WATCH,0.391940839684085,840.9482656261729,89.4,Monitor closely and send proactive retention email
+176,WATCH,0.39191795105495975,750.6012598604589,79.8,Monitor closely and send proactive retention email
+589,WATCH,0.391197793355194,1046.375857666473,111.45,Monitor closely and send proactive retention email
+139,WATCH,0.39079494968994455,1026.0712199059185,109.4,Monitor closely and send proactive retention email
+1453,WATCH,0.3898580799259622,1015.1904401272056,108.5,Monitor closely and send proactive retention email
+414,WATCH,0.38971711190105285,881.0724465859003,94.2,Monitor closely and send proactive retention email
+641,WATCH,0.3896195480434132,1075.3499525998204,115.0,Monitor closely and send proactive retention email
+42,WATCH,0.38896414751134806,905.0417784294048,96.95,Monitor closely and send proactive retention email
+758,WATCH,0.3885205014829793,1007.9775890474415,108.1,Monitor closely and send proactive retention email
+1320,WATCH,0.38812910174054777,984.6059052954215,105.7,Monitor closely and send proactive retention email
+244,WATCH,0.3880900439443881,412.61733472167344,44.3,Monitor closely and send proactive retention email
+712,WATCH,0.38796868428756337,798.4395522638054,85.75,Monitor closely and send proactive retention email
+764,WATCH,0.3867902946164122,967.7493171302633,104.25,Monitor closely and send proactive retention email
+187,WATCH,0.38639112229645306,975.5603055740847,105.2,Monitor closely and send proactive retention email
+95,WATCH,0.3842500300636531,876.090068545129,95.0,Monitor closely and send proactive retention email
+98,WATCH,0.38366633934976574,800.1745173478714,86.9,Monitor closely and send proactive retention email
+394,WATCH,0.38178801499311865,1086.721405876413,118.6,Monitor closely and send proactive retention email
+786,WATCH,0.38142263794835957,1064.1691598759232,116.25,Monitor closely and send proactive retention email
+708,WATCH,0.3810547914742483,863.317735564057,94.4,Monitor closely and send proactive retention email
+500,WATCH,0.37971634441877283,1009.7417030784006,110.8,Monitor closely and send proactive retention email
+373,WATCH,0.37798789154607365,898.099230313471,99.0,Monitor closely and send proactive retention email
+71,WATCH,0.3754140024979779,941.988815067926,104.55,Monitor closely and send proactive retention email
+648,WATCH,0.3749051478395796,892.1242897990637,99.15,Monitor closely and send proactive retention email
+316,WATCH,0.37384587767503163,846.9852204605517,94.4,Monitor closely and send proactive retention email
+238,WATCH,0.369476434827789,976.7479031107432,110.15,Monitor closely and send proactive retention email
+1334,WATCH,0.36778802968199736,967.4296332755259,109.6,Monitor closely and send proactive retention email
+875,WATCH,0.36775092825295247,965.566837220952,109.4,Monitor closely and send proactive retention email
+1214,WATCH,0.36630883970366296,869.4706619206145,98.9,Monitor closely and send proactive retention email
+420,WATCH,0.3657352449819657,945.7913435233634,107.75,Monitor closely and send proactive retention email
+707,WATCH,0.36427425611061415,944.6360009460445,108.05,Monitor closely and send proactive retention email
+691,WATCH,0.36410711192636885,917.9868505887612,105.05,Monitor closely and send proactive retention email
+633,WATCH,0.3628834302557757,911.4180234304063,104.65,Monitor closely and send proactive retention email
+940,WATCH,0.3621424189678109,931.2854446176227,107.15,Monitor closely and send proactive retention email
+859,WATCH,0.36184645561299533,904.0371847035074,104.1,Monitor closely and send proactive retention email
+802,WATCH,0.36088503483263595,905.9657914438492,104.6,Monitor closely and send proactive retention email
+1414,WATCH,0.35961174634883775,906.221600799071,105.0,Monitor closely and send proactive retention email
+307,WATCH,0.35827651322837706,436.8107249280373,50.8,Monitor closely and send proactive retention email
+9,WATCH,0.3578862764661124,949.1144051881299,110.5,Monitor closely and send proactive retention email
+78,WATCH,0.3571213237286682,776.0960607271418,90.55,Monitor closely and send proactive retention email
+1008,WATCH,0.35702596404192627,711.1957203715172,83.0,Monitor closely and send proactive retention email
+67,WATCH,0.3567188781723829,383.972200464753,44.85,Monitor closely and send proactive retention email
+807,WATCH,0.35432491737439986,871.2141068401744,102.45,Monitor closely and send proactive retention email
+131,WATCH,0.3541314830789172,456.82961317180315,53.75,Monitor closely and send proactive retention email
+620,WATCH,0.353095248982968,786.8374528336459,92.85,Monitor closely and send proactive retention email
+697,WATCH,0.3529389599810892,808.9360962766564,95.5,Monitor closely and send proactive retention email
+141,WATCH,0.3519173142707898,739.4486607457836,87.55,Monitor closely and send proactive retention email
+1244,WATCH,0.3493725455613105,872.8723678303782,104.1,Monitor closely and send proactive retention email
+1487,WATCH,0.3491014624795872,864.6545022694415,103.2,Monitor closely and send proactive retention email
+476,WATCH,0.3486774765910811,872.8094594027941,104.3,Monitor closely and send proactive retention email
+888,WATCH,0.3482790321242187,916.9490357766431,109.7,Monitor closely and send proactive retention email
+245,WATCH,0.3476323785043428,431.34225524818856,51.7,Monitor closely and send proactive retention email
+1096,WATCH,0.34666210954460425,875.2524941782167,105.2,Monitor closely and send proactive retention email
+262,WATCH,0.34584485136992865,905.9751726486652,109.15,Monitor closely and send proactive retention email
+404,WATCH,0.3446645516839657,836.7076656679951,101.15,Monitor closely and send proactive retention email
+1073,WATCH,0.3437013694626342,911.908473458261,110.55,Monitor closely and send proactive retention email
+495,WATCH,0.3432187056866423,695.6356726856866,84.45,Monitor closely and send proactive retention email
+218,WATCH,0.3416452209263654,907.2730486920559,110.65,Monitor closely and send proactive retention email
+376,WATCH,0.3398935240529682,864.6891251907512,106.0,Monitor closely and send proactive retention email
+217,WATCH,0.3384184937393075,853.220706415542,105.05,Monitor closely and send proactive retention email
+625,WATCH,0.3375434260677722,845.7488083554101,104.4,Monitor closely and send proactive retention email
+315,WATCH,0.337361872619735,402.81007590796355,49.75,Monitor closely and send proactive retention email
+396,WATCH,0.337319881111505,804.7103083796064,99.4,Monitor closely and send proactive retention email
+477,WATCH,0.3366964564038361,791.506029714138,97.95,Monitor closely and send proactive retention email
+1102,WATCH,0.33580295461703946,843.8056643616967,104.7,Monitor closely and send proactive retention email
+43,WATCH,0.33521807010086924,650.8594049078478,80.9,Monitor closely and send proactive retention email
+760,WATCH,0.33327388285059667,737.0685193123796,92.15,Monitor closely and send proactive retention email
+893,WATCH,0.33256389251772256,850.8314626173412,106.6,Monitor closely and send proactive retention email
+1016,WATCH,0.33207244078509074,792.9889885947966,99.5,Monitor closely and send proactive retention email
+1079,WATCH,0.331953207003412,866.3978702789054,108.75,Monitor closely and send proactive retention email
+1463,WATCH,0.33107265686403875,827.5492130973513,104.15,Monitor closely and send proactive retention email
+150,WATCH,0.33036479570871885,718.7416495438888,90.65,Monitor closely and send proactive retention email
+622,WATCH,0.32896862552333545,834.1328468769694,105.65,Monitor closely and send proactive retention email
+736,WATCH,0.328941935222525,701.8305129907794,88.9,Monitor closely and send proactive retention email
+1050,WATCH,0.32858826078340747,669.5314401722711,84.9,Monitor closely and send proactive retention email
+325,WATCH,0.3278003472219521,806.3888541660021,102.5,Monitor closely and send proactive retention email
+649,WATCH,0.3272352372562844,720.9646747230457,91.8,Monitor closely and send proactive retention email
+568,WATCH,0.3266683804913059,783.2201090659552,99.9,Monitor closely and send proactive retention email
+1304,WATCH,0.32642518533469506,886.440233294898,113.15,Monitor closely and send proactive retention email
+450,WATCH,0.32611703748299503,830.0330838017189,106.05,Monitor closely and send proactive retention email
+536,WATCH,0.32543884540369544,778.3195426674781,99.65,Monitor closely and send proactive retention email
+1104,WATCH,0.32416300367507755,744.1485912365081,95.65,Monitor closely and send proactive retention email
+850,WATCH,0.32266356031370863,861.8989023099786,111.3,Monitor closely and send proactive retention email
+328,WATCH,0.3217913809474385,574.2045401626092,74.35,Monitor closely and send proactive retention email
+241,WATCH,0.3197747061531506,656.5614266736488,85.55,Monitor closely and send proactive retention email
+930,WATCH,0.31944555127841523,774.7193509604126,101.05,Monitor closely and send proactive retention email
+519,WATCH,0.31876384614910663,698.8578562973014,91.35,Monitor closely and send proactive retention email
+799,WATCH,0.31844551942006366,845.2817867486169,110.6,Monitor closely and send proactive retention email
+1480,WATCH,0.31809070489501634,797.389779030827,104.45,Monitor closely and send proactive retention email
+1749,WATCH,0.31808157868531706,899.2802392591283,117.8,Monitor closely and send proactive retention email
+183,WATCH,0.31676660018208497,762.9006798785333,100.35,Monitor closely and send proactive retention email
+216,WATCH,0.3163806360724561,343.9690275379743,45.3,Monitor closely and send proactive retention email
+1756,WATCH,0.31636993267185887,805.6043965556214,106.1,Monitor closely and send proactive retention email
+153,WATCH,0.31540058250816244,610.4893675027993,80.65,Monitor closely and send proactive retention email
+1143,WATCH,0.31522099360936134,818.1876110124583,108.15,Monitor closely and send proactive retention email
+1174,WATCH,0.3142919145341238,735.8202303072906,97.55,Monitor closely and send proactive retention email
+416,WATCH,0.311277354602263,776.9482770872485,104.0,Monitor closely and send proactive retention email
+127,WATCH,0.3098582364242619,436.9001133582093,58.75,Monitor closely and send proactive retention email
+154,WATCH,0.30811936883719787,787.1833635052731,106.45,Monitor closely and send proactive retention email
+444,WATCH,0.30800539804506394,850.4645050820307,115.05,Monitor closely and send proactive retention email
+52,WATCH,0.3074510329913815,740.0961266168536,100.3,Monitor closely and send proactive retention email
+611,WATCH,0.30534270131193164,636.089915373016,86.8,Monitor closely and send proactive retention email
+706,WATCH,0.30528267069454446,805.9462506335974,110.0,Monitor closely and send proactive retention email
+207,WATCH,0.3034911340722264,768.4395514708772,105.5,Monitor closely and send proactive retention email
+1325,WATCH,0.3005930418692104,839.01529846534,116.3,Monitor closely and send proactive retention email
+947,WATCH,0.2982814439581629,718.0230918960897,100.3,Monitor closely and send proactive retention email
+596,WATCH,0.2982034797233246,776.5218611995373,108.5,Monitor closely and send proactive retention email
+1454,WATCH,0.2931056208795696,630.9977806295374,89.7,Monitor closely and send proactive retention email
+481,WATCH,0.2920646684457462,493.82294140806766,70.45,Monitor closely and send proactive retention email
+403,WATCH,0.2913335825239801,804.7798883642427,115.1,Monitor closely and send proactive retention email
+860,WATCH,0.2906829065767788,783.7973892936263,112.35,Monitor closely and send proactive retention email
+788,WATCH,0.28989746502897074,795.2467260674725,114.3,Monitor closely and send proactive retention email
+1263,WATCH,0.28919424803719923,362.99662013629245,52.3,Monitor closely and send proactive retention email
+767,WATCH,0.2866279150855389,762.8888587916705,110.9,Monitor closely and send proactive retention email
+1364,WATCH,0.28646366293872927,727.0447765384948,105.75,Monitor closely and send proactive retention email
+838,WATCH,0.2847089276801289,604.0384609661616,88.4,Monitor closely and send proactive retention email
+897,WATCH,0.28355440716371666,805.4079381078209,118.35,Monitor closely and send proactive retention email
+1014,WATCH,0.28320343698348854,656.2390041781396,96.55,Monitor closely and send proactive retention email
+282,WATCH,0.28227840907191093,789.9278999468355,116.6,Monitor closely and send proactive retention email
+906,WATCH,0.28131827638975276,566.1248994067385,83.85,Monitor closely and send proactive retention email
