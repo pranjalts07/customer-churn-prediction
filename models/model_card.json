@@ -1,0 +1,42 @@
+{
+  "model": {
+    "name": "ChurnSense",
+    "version": "1.0.0",
+    "type": "RandomForestClassifier",
+    "trained_at": "2026-05-02"
+  },
+  "training": {
+    "dataset": "IBM Telco Customer Churn",
+    "train_size": 5282,
+    "test_size": 1761,
+    "churn_rate_train": 0.328,
+    "churn_rate_test": 0.078,
+    "features_count": 33,
+    "feature_engineering": ["is_month_to_month", "is_honeymoon_period", "monthly_charge_per_tenure", "service_bundle_depth"]
+  },
+  "performance": {
+    "auc_roc": 0.79,
+    "auc_pr": 0.23,
+    "precision_at_threshold_0_23": 0.46,
+    "recall_at_threshold_0_23": 0.65,
+    "brier_score": 0.0794
+  },
+  "business": {
+    "threshold": 0.23,
+    "cost_optimization_ratio": "20:1 missed_churn vs outreach_cost",
+    "customers_identified": 54,
+    "revenue_at_risk_usd": 81197,
+    "potential_saves_usd": 24359,
+    "assumed_retention_rate": 0.30
+  },
+  "limitations": [
+    "Model calibration: ECE=0.327 in high-probability bins",
+    "Distribution shift: train churn 32.8%, test churn 7.8%",
+    "CLV model: simple 24-month window"
+  ],
+  "next_steps": [
+    "Phase 1: Shadow deployment (Month 1)",
+    "Phase 2: A/B testing (Months 2-4)",
+    "Phase 3: Full production (Month 5+)"
+  ]
+}
