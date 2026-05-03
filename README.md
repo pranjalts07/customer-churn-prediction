@@ -12,7 +12,7 @@ This is a production ready customer churn prediction system for telecom retentio
 ### Landing Page
 
 <p align="center">
-  <img src="Images/Landing%20page.png" alt="Customer churn prediction landing page" width="900">
+  <img src="Images/landing page.png" alt="Customer churn prediction landing page" width="900">
 </p>
 
 ### Campaign Overview
