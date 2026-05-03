@@ -20,7 +20,7 @@ The dashboard is designed for decision making rather than only model reporting. 
 ### Landing Page
 
 <p align="center">
-  <img src="Images/landing page.png" alt="Customer churn prediction landing page" width="900">
+  <img src="Images/landing-page.png" alt="Customer churn prediction landing page" width="900">
 </p>
 
 ### Campaign Overview
@@ -216,7 +216,7 @@ customer-churn-prediction/
       train.parquet
       test.parquet
   Images/
-    landing page.png
+    landing-page.png
     Overview.png
     Risk Analysis.png
     Revenue Impact.png
