@@ -278,13 +278,16 @@ async def predict_single(customer: CustomerFeatures):
                 "recommended_action": "Monitor account activity",
             }
 
-        import numpy as np
+        import pandas as pd
 
         feature_names = MODEL_STATE["feature_names"]
         customer_dict = customer.model_dump()
 
         # Build feature row in correct order
-        row = np.array([customer_dict.get(f, 0.0) for f in feature_names]).reshape(1, -1)
+        row = pd.DataFrame(
+            [[customer_dict.get(f, 0.0) for f in feature_names]],
+            columns=feature_names,
+        )
 
         # Scale if scaler exists, otherwise use raw
         if MODEL_STATE["scaler"] is not None:
