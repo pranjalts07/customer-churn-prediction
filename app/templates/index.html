@@ -1312,17 +1312,17 @@ setTimeout(function() {
           <div class="roi-inputs">
             <div class="input-group">
               <label>Customers to contact</label>
-              <input id="roi-customers" type="number" value="{{ at_risk_count }}" min="0" max="1000">
+              <input id="roi-customers" type="number" value="0" min="0" max="1000">
               <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">Currently {{ at_risk_count }} are above the optimized risk threshold</div>
             </div>
             <div class="input-group">
               <label>Cost per contact</label>
-              <input id="roi-cost" type="number" value="25" min="0" max="500">
+              <input id="roi-cost" type="number" value="0" min="0" max="500">
               <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">Industry average for retention outreach</div>
             </div>
             <div class="input-group">
               <label>Success rate (%)</label>
-              <input id="roi-rate" type="number" value="30" min="0" max="100">
+              <input id="roi-rate" type="number" value="0" min="0" max="100">
               <div style="font-size: 12px; color: #9ca3af; margin-top: 4px;">How many contacts you expect to retain</div>
             </div>
           </div>
@@ -1333,19 +1333,19 @@ setTimeout(function() {
           <div class="roi-results">
             <div class="roi-card">
               <div class="roi-label">Campaign Cost</div>
-              <div class="roi-value" id="roi-cost-value">-</div>
+              <div class="roi-value" id="roi-cost-value">$0</div>
             </div>
             <div class="roi-card">
               <div class="roi-label">Revenue Saved</div>
-              <div class="roi-value" id="roi-saved-value">-</div>
+              <div class="roi-value" id="roi-saved-value">$0</div>
             </div>
             <div class="roi-card">
               <div class="roi-label">Net Return</div>
-              <div class="roi-value" id="roi-net-value">-</div>
+              <div class="roi-value" id="roi-net-value">$0</div>
             </div>
             <div class="roi-card">
               <div class="roi-label">Return Multiple</div>
-              <div class="roi-value" id="roi-multiple-value">-</div>
+              <div class="roi-value" id="roi-multiple-value">0.0x</div>
             </div>
           </div>
 
@@ -1495,10 +1495,6 @@ function switchTab(tabName) {
 
   if (tabName === 'risk' && !riskTableLoaded) {
     loadRiskTable();
-  }
-
-  if (tabName === 'revenue') {
-    calculateROI();
   }
 }
 
