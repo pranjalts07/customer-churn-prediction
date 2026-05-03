@@ -61,47 +61,50 @@ The system combines a trained machine learning model, a FastAPI backend, an inte
 | AUC PR | 0.23 |
 | Cost optimized threshold | 0.23 |
 
-## Machine Learning Model Used
+## Machine Learning Models Tested
 
-This repository contains one final production machine learning model:
+This project compares eight classification models on the same processed train and test sets. Each model uses SMOTE during training to handle class imbalance. The comparison script is available at `src/compare_models.py`, and the full results are saved in `reports/model_comparison.csv` and `reports/model_comparison.md`.
 
-| Model | Role | Status |
-| --- | --- | --- |
-| Random Forest Classifier | Final churn prediction model used by the API and dashboard | Deployed in the project |
+Best model from this comparison: Logistic Regression.
 
-The saved model artifact is stored in the `models` directory. The model metadata is documented in `models/model_card.json`.
+| Rank | Model | AUC ROC | AUC PR | Best threshold | Business value | Precision | Recall | F1 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | Logistic Regression | 0.8024 | 0.2545 | 0.28 | $3,575 | 0.2387 | 0.5766 | 0.3376 |
+| 2 | Gradient Boosting | 0.7933 | 0.2457 | 0.27 | $3,425 | 0.2332 | 0.5839 | 0.3333 |
+| 3 | Random Forest | 0.7787 | 0.2184 | 0.34 | $3,050 | 0.2349 | 0.5109 | 0.3218 |
+| 4 | AdaBoost | 0.7963 | 0.2360 | 0.48 | $3,000 | 0.2708 | 0.3796 | 0.3161 |
+| 5 | Decision Tree | 0.7266 | 0.2235 | 0.30 | $2,975 | 0.2533 | 0.4234 | 0.3169 |
+| 6 | KNN | 0.7811 | 0.2143 | 0.32 | $2,450 | 0.2052 | 0.6350 | 0.3102 |
+| 7 | Extra Trees | 0.7794 | 0.2159 | 0.38 | $2,375 | 0.2487 | 0.3504 | 0.2909 |
+| 8 | Gaussian Naive Bayes | 0.7881 | 0.2202 | 0.53 | $2,200 | 0.2761 | 0.2701 | 0.2731 |
 
-### Final Model Results
+Business value is calculated as:
 
-| Metric | Result | Meaning |
-| --- | --- | --- |
-| AUC ROC | 0.79 | The model ranks churn risk reasonably well across customers |
-| AUC PR | 0.23 | More useful than accuracy because churn is an imbalanced problem |
-| Precision at threshold 0.23 | 46 percent | 46 percent of flagged customers are expected to churn |
-| Recall at threshold 0.23 | 65 percent | The model catches about 65 percent of churners |
-| Brier score | 0.0794 | Measures probability prediction error |
-| Customers flagged for outreach | 54 | Highest priority customers for retention |
-| Revenue at risk | $81,197 | Estimated revenue exposure from flagged customers |
-| Potential saves | $24,359 | Estimated savings at a 30 percent retention success rate |
+```text
+true positives * 150 - flagged customers * 25
+```
 
-### Why Random Forest Classifier
+This reflects the project assumption that a correctly retained churner saves about `$150`, while every customer contacted costs `$25`.
 
-Random Forest was selected as the final production model because it is a strong fit for this type of customer churn dataset.
+### Current Production Artifact
 
-1. It handles non linear churn patterns, such as the interaction between contract type, tenure, monthly charges, and support services.
-2. It works well with mixed customer features after preprocessing and feature engineering.
-3. It is more robust than a single decision tree because it averages many trees.
-4. It provides probability scores, which are needed for risk ranking and campaign prioritization.
-5. It works well with SMOTE and class weighting, which helps because churn data is imbalanced.
-6. It supports feature importance analysis, which helps explain why customers are being flagged.
+The current saved model artifact used by the API is still a Random Forest model. Its model card reports:
 
-The project does not currently include saved result files for other trained models. Because of that, the README reports only the verified Random Forest results that are present in the repository.
+| Metric | Result |
+| --- | --- |
+| AUC ROC | 0.79 |
+| AUC PR | 0.23 |
+| Precision at threshold 0.23 | 46 percent |
+| Recall at threshold 0.23 | 65 percent |
+| Brier score | 0.0794 |
+
+The comparison shows that Logistic Regression is the best candidate on the current held out test set. The production artifact remains unchanged in this update so the working application behavior stays stable.
 
 ## Main Features
 
 | Feature | Description |
 | --- | --- |
-| Churn prediction API | Scores individual customers using a trained Random Forest model |
+| Churn prediction API | Scores individual customers using the trained production model |
 | Portfolio dashboard | Shows customer risk, revenue exposure, and campaign metrics |
 | Risk segmentation | Groups customers into critical, high, medium, and low risk tiers |
 | Revenue impact analysis | Estimates exposed revenue and expected retention value |
@@ -165,15 +168,16 @@ curl http://localhost:8000/insights/global
 
 ## Model Approach
 
-The model is built to support retention prioritization rather than only raw accuracy. It uses engineered customer features, a Random Forest classifier, probability calibration analysis, and a cost optimized decision threshold.
+The model workflow is built to support retention prioritization rather than only raw accuracy. It uses engineered customer features, classifier comparison, probability scores, and a cost optimized decision threshold.
 
 Core workflow:
 
 ```text
 Customer data
 Feature engineering
-Random Forest classifier
-Calibrated churn probability
+Classifier comparison
+Best model selection
+Churn probability
 Cost optimized threshold
 Risk tier and retention recommendation
 ```
@@ -284,7 +288,7 @@ The test suite covers the FastAPI health check, dashboard route, global insights
 | Area | Tools |
 | --- | --- |
 | Backend | FastAPI, Uvicorn |
-| Machine learning | scikit-learn, imbalanced-learn, Random Forest |
+| Machine learning | scikit-learn, imbalanced-learn, Logistic Regression, Random Forest, Gradient Boosting |
 | Data | pandas, numpy, pyarrow |
 | Analysis | SHAP, matplotlib, seaborn |
 | Testing | pytest, FastAPI TestClient |
