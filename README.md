@@ -7,6 +7,14 @@
 
 This is a production ready customer churn prediction system for telecom retention teams. It predicts churn probability, ranks customers by revenue exposure, recommends retention actions, and estimates campaign return on investment.
 
+Live demo: [Azure App Service](https://churn-prediction.azurewebsites.net/)
+
+## About The Project
+
+Customer Churn Prediction is an end to end machine learning project built around a practical telecom retention use case. The project starts with the IBM Telco Customer Churn dataset, engineers business focused features, compares multiple classification models, selects the best model by held out business value, and serves predictions through a FastAPI application.
+
+The dashboard is designed for decision making rather than only model reporting. It shows which customers are above the optimized churn risk threshold, how much revenue is exposed, which customers should be contacted first, and what return a retention campaign could generate.
+
 ## Dashboard Preview
 
 ### Landing Page
