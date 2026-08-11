@@ -7,7 +7,7 @@
 
 This is a production ready customer churn prediction system for telecom retention teams. It predicts churn probability, ranks customers by revenue exposure, recommends retention actions, and estimates campaign return on investment.
 
-Live demo: [Azure App Service](https://churn-prediction.azurewebsites.net/)
+Live demo: [churnsense.onrender.com](https://churnsense-qj1h.onrender.com/)
 
 ## About The Project
 
