@@ -9,6 +9,15 @@ This is a production ready customer churn prediction system for telecom retentio
 
 Live demo: [churnsense.onrender.com](https://churnsense-qj1h.onrender.com/)
 
+<p align="center">
+  <a href="https://github.com/pranjalts07/customer-churn-prediction/stargazers">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="assets/star-dark.svg">
+      <img src="assets/star-light.svg" alt="Please star the repo" width="400">
+    </picture>
+  </a>
+</p>
+
 ## About The Project
 
 Customer Churn Prediction is an end to end machine learning project built around a practical telecom retention use case. The project starts with the IBM Telco Customer Churn dataset, engineers business focused features, compares multiple classification models, selects the best model by held out business value, and serves predictions through a FastAPI application.
